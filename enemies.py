@@ -23,8 +23,6 @@ class Ogre(Enemy):
 		self.damage = 10
 
 
-
-
 class BatColony(Enemy):
 	def __init__(self):
 		self.name = "Colony of bats"
