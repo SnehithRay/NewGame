@@ -25,6 +25,7 @@ class VictoryTile(MapTile):
 		It grows as you get closer! It's sunlight!	
 		Victory is yours!
 		"""
+		
 class World:									# I choose to define the world as a class. This makes it more straightforward to import into the game.
 	map = [
 		[None, VictoryTile(), None],

@@ -9,7 +9,7 @@ from player import Player
 from world import World
 import parse
 
-debug_mode = False	# Use this to toggle verbose mode on the text parser.
+debug_mode = True	# Use this to toggle verbose mode on the text parser.
 
 game_name = "Escape from Cave Terror, v2"
 
@@ -82,6 +82,8 @@ def play():
 						player.print_inventory()
 					elif(parsed_input[1] == "around"):
 						print_wrap(world.tile_at(player.x,player.y).intro_text())
+					else:
+						print("I don't know what you're trying to look at.")
 						
 				else:
 					print("I don't understand what you are trying to do. Please try again.")

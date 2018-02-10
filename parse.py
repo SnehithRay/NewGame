@@ -8,7 +8,8 @@ verbs = {'go': ['go', 'go to', 'walk', 'head', 'move'], \
 	'take': ['take', 'pick up', 'grab', 'get'], \
 	'give': ['give', 'hand'], \
 	'drop': ['drop', 'put down', 'throw away'], \
-	'move': ['move', 'push', 'pull'], \
+	'open': ['open'], \
+	'close': ['close', 'shut', 'slam'], \
 	'equip': ['equip', 'put on', 'wear'], \
 	'unequip': ['unequip', 'take off', 'remove'], \
 	'use': ['use', 'apply'], \
