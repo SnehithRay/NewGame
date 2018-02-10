@@ -22,9 +22,7 @@ class BoringTile(MapTile):
 class VictoryTile(MapTile):
 	def intro_text(self):
 		return """You see a bright light in the distance...
-		... it grows as you get closer! It's sunlight!
-		
-		
+		It grows as you get closer! It's sunlight!	
 		Victory is yours!
 		"""
 class World:									# I choose to define the world as a class. This makes it more straightforward to import into the game.

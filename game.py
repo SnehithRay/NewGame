@@ -9,6 +9,8 @@ from player import Player
 from world import World
 import parse
 
+debug_mode = False	# Use this to toggle verbose mode on the text parser.
+
 game_name = "Escape from Cave Terror, v2"
 
 help_text = "To interact with this game world, you will use a basic text-based interface. \
@@ -75,7 +77,7 @@ def play():
 						
 						
 						
-				elif(parsed_input) == "check"):													### Command "check"
+				elif(parsed_input[0] == "check"):													### Command "check"
 					if(parsed_input[1] == "inventory"):
 						player.print_inventory()
 					elif(parsed_input[1] == "around"):

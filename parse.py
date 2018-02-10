@@ -4,7 +4,7 @@ single_commands = {'go': {'north': ['north', 'n'], 'south': ['south', 's'], 'eas
 
 game_commands = ['help', 'exit', 'quit', 'look']
 
-verbs = {'go': ['go', 'go to', 'walk', 'head'], \
+verbs = {'go': ['go', 'go to', 'walk', 'head', 'move'], \
 	'take': ['take', 'pick up', 'grab', 'get'], \
 	'give': ['give', 'hand'], \
 	'drop': ['drop', 'put down', 'throw away'], \
