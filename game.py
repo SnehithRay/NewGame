@@ -91,12 +91,15 @@ def play():
 				print("I don't understand what you are trying to do. Please try again.")
 				
 				
-			if(debug_mode):		
-				for word in parsed_input:
-					if(word):
-						print(word + " ")
-					else:
-						print("None")
+			if(debug_mode):	
+				print()
+				print("RAW USER COMANDS: " + raw_input)
+				print("PARSED USER COMMANDS: " + str(parsed_input))
+				#for word in parsed_input:
+				#	if(word):
+				#		print(word + " ")
+				#	else:
+				#		print("None")
 		else:
 			print("Something seems to have gone wrong. Please try again.")
 			

@@ -1,3 +1,5 @@
+
+
 class MapTile:
 	def __init__(self, x=0, y=0):
 		self.x = x
@@ -21,6 +23,10 @@ class BoringTile(MapTile):
 class SecretTile(MapTile):
 	def intro_text(self):
 		return """You've entered a secret room. Don't tell anyone!"""
+		
+class DeathTile(MapTile):
+	def intro_text(self):
+		return """You've died. Try harder, stupid!"""
 
 
 class VictoryTile(MapTile):
@@ -32,10 +38,11 @@ class VictoryTile(MapTile):
 		
 class World:									# I choose to define the world as a class. This makes it more straightforward to import into the game.
 	map = [
-		[None, 			VictoryTile(), 			None, 				None],
-		[None, 			BoringTile(), 			None, 				None],
-		[BoringTile(), 	StartTile(), 			BoringTile(), 		SecretTile()],
-		[None, 			BoringTile(), 			None, 				None]
+		[None, 			VictoryTile(), 			None, 				None, 					None],
+		[None, 			BoringTile(), 			None, 				DeathTile(), 			None],
+		[BoringTile(), 	StartTile(), 			BoringTile(), 		SecretTile(), 			None],
+		[None, 			BoringTile(), 			None, 				None, 					None],
+		[None,			DeathTile(),			None,				None,					None]
 	]
 	
 	def __init__(self):
