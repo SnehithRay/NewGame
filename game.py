@@ -1,6 +1,7 @@
 from random import randint 	# Used to generate random integers.
 
 from textwrap import fill	# Gives us a tool for formatting text in a much prettier fashion.
+from textwrap import dedent	# Strips extra tabs off of ugly, ugly multiline strings.
 
 from terminalsize import get_terminal_size		# Allows us to determine terminal window size on any OS.
 												# Adapted for Python 3.x from https://gist.github.com/jtriley/1108174
@@ -127,7 +128,7 @@ def clear_screen():
 		
 def print_wrap(text):
 	get_width()
-	text = text.replace("\t", "")
+	text = dedent(text)
 	print(fill(text, wrap_width))
  
 
