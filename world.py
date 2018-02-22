@@ -52,7 +52,7 @@ class World:									# I choose to define the world as a class. This makes it mo
 		[Expanse(),													Expanse(),		 											Nook(), 																Corridor(barriers = [barriers.Wall('e')]),		 									Corridor(barriers = [barriers.Wall('w')])],
 		[Expanse(),													Expanse(),	 												Corridor(barriers = [barriers.Wall('n'), barriers.Wall('s')]), 															Corridor(barriers = [barriers.Wall('e'), barriers.Wall('s')]),		 				Corridor(barriers = [barriers.Wall('w')])],
 		[None,														Corridor(barriers = [barriers.Wall('n')]),					StartTile(barriers = [barriers.Wall('s'), barriers.Wall('n')]), 		Corridor(barriers = [barriers.Wall('n')]), 											Corridor()],
-		[None,														Corridor(),													StoreRoom(barriers = [barriers.Wall('n')]),								None,																				None]
+		[None,														Corridor(barriers = [barriers.WoodenDoor('e')]),			StoreRoom(barriers = [barriers.Wall('n')]),								None,																				None]
 	]
 
 	def __init__(self):
@@ -123,7 +123,7 @@ class World:									# I choose to define the world as a class. This makes it mo
 			
 	def check_east(self, x, y):
 		for barrier in self.map[y][x].contents['barriers']:
-			if(barrier.direction == 'west' and not barrier.passable):
+			if(barrier.direction == 'east' and not barrier.passable):
 				return [False, barrier.description()]	
 				
 		if x+1 < 0:

@@ -51,9 +51,7 @@ def play():
 
 		if(len(parsed_input) == 3):
 			[verb, noun1, noun2] = parsed_input
-			[turn_taken, result_text] = handle_input(verb, noun1, noun2)
-			if(turn_taken):
-				turn_count += 1
+			result_text = handle_input(verb, noun1, noun2)
 			if(result_text):
 				if(isinstance(result_text, list)):	# Find out if there is more than one sentence returned.
 					for text in result_text:
@@ -67,16 +65,16 @@ def play():
 def handle_input(verb, noun1, noun2):
 	if(verb == 'help'):
 		if(not noun1):
-			return [False, help_text]
+			return help_text
 		else:
-			return [False, "I'm not sure what you need help with. Try using 'help' on its own."]
+			return "I'm not sure what you need help with. Try using 'help' on its own."
 
 			
 	elif(verb == 'exit'):
 		if(not noun1):
 			exit()
 		else:
-			return[False, "Are you trying to quit the game? If so, just type 'exit' on its own."]
+			return "Are you trying to quit the game? If so, just type 'exit' on its own."
 	
 	
 	elif(verb == 'go'):
@@ -85,57 +83,57 @@ def handle_input(verb, noun1, noun2):
 				[move_status, move_description] = world.check_north(player.x, player.y)
 				if(move_status):
 					player.move_north()
-					return [True, [move_description, world.tile_at(player.x, player.y).intro_text()]]
+					return [move_description, world.tile_at(player.x, player.y).intro_text()]
 				else:
-					return [False, move_description]
+					return move_description
 					
 			elif(noun1 == 'south'):
 				[move_status, move_description] = world.check_south(player.x, player.y)
 				if(move_status):
 					player.move_south()
-					return [True, [move_description, world.tile_at(player.x, player.y).intro_text()]]
+					return [move_description, world.tile_at(player.x, player.y).intro_text()]
 				else:
-					return [False, move_description]
+					return move_description
 					
 			elif(noun1 == 'east'):
 				[move_status, move_description] = world.check_east(player.x, player.y)
 				if(move_status):
 					player.move_east()
-					return [True, [move_description, world.tile_at(player.x, player.y).intro_text()]]
+					return [move_description, world.tile_at(player.x, player.y).intro_text()]
 				else:
-					return [False, move_description]
+					return move_description
 					
 			elif(noun1 == 'west'):
 				[move_status, move_description] = world.check_west(player.x, player.y)
 				if(move_status):
 					player.move_west()
-					return [True, [move_description, world.tile_at(player.x, player.y).intro_text()]]
+					return [move_description, world.tile_at(player.x, player.y).intro_text()]
 				else:
-					return [False, move_description]		
+					return move_description	
 					
 			else:
-				return [False, "I'm not sure where you're trying to go."]
+				return "I'm not sure where you're trying to go."
 				
 		else:
-			return [False, "Whatever you are trying to do is too complicated for me to understand. Please try again."]
+			return "Whatever you are trying to do is too complicated for me to understand. Please try again."
 			
 			
 	elif(verb == 'check'):
 		if(not noun2):
 			if(noun1 == None or noun1 == 'around' or noun1 == 'room' or noun1 == 'surroundings'):
-				return [False, world.tile_at(player.x, player.y).intro_text()]
+				return world.tile_at(player.x, player.y).intro_text()
 			elif(noun1 == 'inventory' or noun1 == 'pockets'):
 				player.print_inventory();
-				return [False, '']	# No need to return any text because the player.print_inventory() function already did.
+				return ''	# No need to return any text because the player.print_inventory() function already did.
 			else:
-				return [False, "I'm not sure what you are trying to look at."]
+				return "I'm not sure what you are trying to look at."
 		else:
-			return [False, "I think you are trying to look at something, but your phrasing is too complicated. Please try again."]
+			return "I think you are trying to look at something, but your phrasing is too complicated. Please try again."
 			
 	elif(verb):
-		return [False, "I'm not sure how to %s that." % verb]
+		return "I'm not sure how to %s that." % verb
 	else:
-		return [False, "I have no idea what you are trying to do. Please try again."]
+		return "I have no idea what you are trying to do. Please try again."
  
 
 ### Play the game.

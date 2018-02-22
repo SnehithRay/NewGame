@@ -34,9 +34,17 @@ def identify_verbs(text):
 		for verb in verbs.keys():							# This loop replaces any synonym that appears at the beginning of the user's input with their generic verb equivalent.
 			for synonym in verbs[verb]:						# e.g. "look at door" becomes "check door".
 				if text.startswith(synonym):
-					text = text[len(synonym):]		# Strip the synonym from the beginning of the user's input.
+					text = text[len(synonym):]				# Strip the synonym from the beginning of the user's input.
 					text = verb + text						# Put the generic verb equivalent at the beginning of the string.
 					found_verb = True						# Let the code later on know that we found a matching verb.	
+					
+		if(not found_verb):
+			for command in game_commands.keys():
+				for synonym in game_commands[command]:
+					if text.startswith(synonym):
+						text = text[len(synonym):]			# Strip the synonym from the beginning of the user's input.
+						text = command + text				# Put the command equivalent at the beginning of the string.
+						found_verb = True					# Act as though we found a verb, even though commands may not be verbs.
 					
 	return [found_verb, text]
 	
@@ -62,13 +70,7 @@ def parse_command(text, found_verb):
 	if(len(text) > 0):
 		text = text.split(" ")										# Split the text up into a list of words.
 		
-		if(len(text) == 1):										# Stop here if we have a special in-game command such as "help" or "quit".
-			for command in game_commands.keys():
-				for synonym in game_commands[command]:
-					if(text[0] == synonym):
-						text[0] = command
-						return text
-
+		if(len(text) == 1):										# If command is only one word long, we might have an implied verb or single word command.
 				
 			for verb in implied_verbs.keys():					# This set of loops replaces any listed single word command synonyms with their generic command equivalent and adds their implied verb.
 				for command in implied_verbs[verb].keys():		# e.g. ["i"] becomes ["check", "inventory"]
