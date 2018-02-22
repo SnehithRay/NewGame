@@ -4,9 +4,9 @@ class Player:
 	def __init__(self):
 		self.inventory = [items.Rock(),
 						items.Dagger(),
-						'Gold(5)',
-						'Crusty Bread']
-						
+						items.Crusty_Bread()]
+		self.gold = 5
+		self.hp = 100
 		self.x = 1
 		self.y = 2
 
@@ -15,6 +15,7 @@ class Player:
 		for item in self.inventory:
 			print('* ' + str(item))
 			best_weapon = self.most_powerful_weapon()
+		print("* %i Gold" % self.gold)
 		print("Your best weapon is your {}".format(best_weapon))
 	
 	def most_powerful_weapon(self):

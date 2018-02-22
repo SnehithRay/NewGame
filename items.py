@@ -27,7 +27,38 @@ class Item:
 			return self.dropped_description
 
 	def check_text(self):
-		return self.description			
+		return self.description
+		
+	def drop(self):
+		is_dropped = True
+		
+	def pick_up(self):
+		is_dropped = False
+		
+class Consumable(Item):
+	consume_description = "You should define flavor text for consuming this item in its subclass."
+	
+	item_type = "consumable"
+
+	healing_value = 0		# Define this appropriately in your subclass.
+		
+	def consume(self):
+		return [self.consume_description, self.healing_value]
+			
+
+class Crusty_Bread(Item):
+	name = "Crusty bread"
+	healing_value = 10
+	
+	description = "Just a stale old piece of bread."
+	dropped_description = "A piece of crusty bread is lying on the ground."
+			
+class Red_Potion(Item):
+	name = "Red potion"
+	healing_value = 75
+	
+	description = "A bottle of mysterious, glowing red potion. For some reason it looks healthy."
+	dropped_description = "A bottle of red potion is glowing on the ground."
 
 class Weapon(Item):
 	equip_description = "You should define flavor text for equipping this item in its subclass."

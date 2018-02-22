@@ -30,7 +30,12 @@ def print_wrap(text):
 def print_center(text):
 	get_width()
 	text = " ".join(text.split())				# Removes leading tabs from multiline strings.
-	print(textwrap.fill(text, wrap_width, replace_whitespace=True))	
+	if(len(text) < wrap_width):
+		for i in range(0,wrap_width-len(text),2):
+			text = " " + text
+		print(text)
+	else:
+		print(textwrap.fill(text, wrap_width, replace_whitespace=True))	
  
 if __name__ == "__main__":
 	sizex, sizey = get_terminal_size()

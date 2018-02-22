@@ -16,14 +16,19 @@ or in some cases, [VERB][NOUN][OBJECT] (e.g. 'attack thief with nasty knife').\
 The game will ignore the articles 'a', 'an', and 'the' (e.g. 'open the door' is the same as 'open door.').\n\n\
 To exit the game at any time, type 'exit' or 'quit'."
 
+victory_text = "Thank you for playing! I hope you enjoyed this game engine demo - I look forward to seeing the \
+				games you create using this as an example!"
+
 player = Player()
 world = World()
 	
 def play():	
 	clear_screen()
-	print("--------------------------------------------------------")
-	print_wrap("Welcome to %s!" % game_name)
-	print("--------------------------------------------------------")
+	print_center("========================================================")
+	print()
+	print_center("WELCOME TO %s!" % game_name.upper())
+	print()
+	print_center("========================================================")
 	print()
 	
 	turn_count = 0		# Tracking turn count may be used for some games.
