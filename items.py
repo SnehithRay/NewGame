@@ -1,29 +1,79 @@
-class Weapon:
-	def __init__(self):
-		raise NotImplementedError("Do not create raw Weapon objects.")
+from random import randint 	# Used to generate random integers.
 
+class Item:
+	name = "Do not create raw Item objects!"
+	
+	description = "You should define a description for items in their subclass."
+	dropped_description = "You should define the description for this item after it is dropped in its subclass."
+	
+	is_dropped = False	# This is going to store the status of whether this item has been picked up and dropped before.
+	
+	item_type = None	# Do not create raw Item objects!
+	
+		
+	def __init__(self, description = ""):
+		if(description):
+			self.intro_description = description
+		else:
+			self.intro_description = self.dropped_description
+			
 	def __str__(self):
-		return self.name
+		return self.name	
+
+	def room_text(self):
+		if(not is_dropped):					# We may want to have a different description for a weapon the first time it is encountered vs. after it has been dropped.
+			return self.intro_description
+		else:
+			return self.dropped_description
+
+	def check_text(self):
+		return self.description			
+
+class Weapon(Item):
+	equip_description = "You should define flavor text for equipping this item in its subclass."
+	attack_descriptions = ["You should define one or more attack descriptions as a list in your subclass.", "This is an example secondary attack description"]
+	
+	item_type = "weapon"	# Used to give us a clean way to check what type of equipment this is.
+
+	damage = 0		# Define this appropriately in your subclass.
+		
+	def equip_text(self):
+		return self.equip_description
+			
+	def attack(self):
+		return [self.attack_descriptions[randint(0, len(self.attack_descriptions))], self.damage]		# Return damage and a random attack description from your list.
+		
 
 
 class Rock(Weapon):
-	def __init__(self):
-		self.name = "Rock"
-		self.description = "A fist-sized rock, suitable for bludgeoning."
-		self.damage = 5
+	name = "Rock"
+	
+	description = "A fist-sized rock, suitable for bludgeoning."
+	dropped_description = "A fist-sized rock lies on the ground. It looks like it would be suitable for bludgeoning someone."
+	equip_description = "You arm yourself with the rock."
+	attack_descriptions = ["You swing the rock as hard as you can. Crack!", "You wind up and chuck the rock at your enemy. Oof."]
+	
+	damage = 5
 
-		
+
 class Dagger(Weapon):
-	def __init__(self):
-		self.name = "Dagger"
-		self.description = "A small dagger with some rust. " \
-							"Somewhat more dangerous than a rock."
-		self.damage = 10
+	name = "Dagger"
+	
+	description = "A small dagger with some rust. It looks pretty sharp."
+	dropped_description = "A dagger lies on the ground. It looks somewhat more dangerous than a rock."
+	equip_description = "You take the dagger in your hand."
+	attack_descriptions = ["You lunge forward with the dagger.", "You stab wildly with the dagger.", "You swing the dagger at your foe."]
+	
+	damage = 10
 
 
 class RustySword(Weapon):
-	def __init__(self):
-		self.name = "Rusty sword"
-		self.description = "This sword is showing its age, " \
-							"but still has some fight in it."
-		self.damage = 20
+	name = "Rusty sword"
+	
+	description = "A rusty sword. Despite its age, it still looks deadly."
+	dropped_description = "There is a rusty sword lying on the ground."
+	equip_description = "You arm yourself with the rusty sword."
+	attack_descriptions = ["You slash with your rusty sword.", "Your rusty sword connects mightily with your enemy.", "You swing the rusty sword with all your might."]
+	
+	damage = 20
+	

@@ -1,8 +1,6 @@
 import string				# Used to strip user inputs of punctuation.
 
-single_commands = {'go': {'north': ['north', 'n'], 'south': ['south', 's'], 'east': ['east', 'e'], 'west': ['west', 'w']}, 'check': {'inventory': ['inventory', 'i']}}
-
-game_commands = ['help', 'exit', 'quit', 'look']
+game_commands = {'help': ['help'], 'exit': ['exit', 'quit']}
 
 verbs = {'go': ['go', 'go to', 'walk', 'head', 'move'], \
 	'take': ['take', 'pick up', 'grab', 'get'], \
@@ -10,11 +8,15 @@ verbs = {'go': ['go', 'go to', 'walk', 'head', 'move'], \
 	'drop': ['drop', 'put down', 'throw away'], \
 	'open': ['open'], \
 	'close': ['close', 'shut', 'slam'], \
+	'push': ['push', 'shove'], \
+	'pull': ['pull', 'tug'], \
 	'equip': ['equip', 'put on', 'wear'], \
 	'unequip': ['unequip', 'take off', 'remove'], \
 	'use': ['use', 'apply'], \
-	'check': ['check', 'look', 'examine', 'inspect'], \
+	'check': ['check', 'look', 'look at', 'look in', 'examine', 'inspect'], \
 	'attack': ['attack', 'fight', 'kill']}
+	
+implied_verbs = {'go': {'north': ['north', 'n'], 'south': ['south', 's'], 'east': ['east', 'e'], 'west': ['west', 'w']}, 'check': {'inventory': ['inventory', 'i']}}
 	
 prepositions = ["with", "to", "on", "from", "at"]
 
@@ -55,19 +57,21 @@ def strip_articles(text):
 	
 	
 	
-def parse_command(text, found_verb = True):					
+def parse_command(text, found_verb):					
 	if(len(text) > 0):
 		text = text.split(" ")										# Split the text up into a list of words.
 		
 		if(len(text) == 1):										# Stop here if we have a special in-game command such as "help" or "quit".
-			for command in game_commands:
-				if(text[0] == command):
-					return text
+			for command in game_commands.keys():
+				for synonym in game_commands[command]:
+					if(text[0] == synonym):
+						text[0] = command
+						return text
 
 				
-			for verb in single_commands.keys():					# This set of loops replaces any listed single word command synonyms with their generic command equivalent and adds their implied verb.
-				for command in single_commands[verb].keys():	# e.g. ["i"] becomes ["check", "inventory"]
-					for synonym in single_commands[verb][command]:
+			for verb in implied_verbs.keys():					# This set of loops replaces any listed single word command synonyms with their generic command equivalent and adds their implied verb.
+				for command in implied_verbs[verb].keys():		# e.g. ["i"] becomes ["check", "inventory"]
+					for synonym in implied_verbs[verb][command]:
 						if text[0] == synonym:
 							text.insert(0, verb)
 							text[1] = command
@@ -108,7 +112,19 @@ def parse_command(text, found_verb = True):
 			
 		else:													# Return empty handed if there is no user input.					
 			return None
-	
+
+def pad_command(input):
+	for i in range(3):
+		try:
+			input[i]
+			
+		except IndexError:		# If we have reached beyond the boundaries of our list.
+			input.append(None)	# Add another None object to the end of the list.
+			
+		except:	# If the input is not a list (i.e. if the input is None).
+			input = [None]		# Make input a list.
+	return input
+			
 def get_command():
 	text = input('>> ').lower()
 	
@@ -117,5 +133,7 @@ def get_command():
 	user_input = strip_articles(user_input)
 	
 	user_input = parse_command(user_input, found_verb)
+	
+	user_input = pad_command(user_input)
 	
 	return [text, user_input]

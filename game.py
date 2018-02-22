@@ -1,10 +1,5 @@
-from random import randint 	# Used to generate random integers.
+from formattext import *				# Import some important functions for formatting text.
 
-from textwrap import fill	# Gives us a tool for formatting text in a much prettier fashion.
-from textwrap import dedent	# Strips extra tabs off of ugly, ugly multiline strings.
-
-from terminalsize import get_terminal_size		# Allows us to determine terminal window size on any OS.
-												# Adapted for Python 3.x from https://gist.github.com/jtriley/1108174
 
 from player import Player
 from world import World
@@ -12,7 +7,7 @@ import parse
 
 debug_mode = True	# Use this to toggle verbose mode on the text parser.
 
-game_name = "Escape from Cave Terror, v2"
+game_name = "Escape from Cave Terror, v3"
 
 help_text = "To interact with this game world, you will use a basic text-based interface. \
 Try single-word commands like 'inventory' or 'west' (or their counterpart abbreviations, 'i' or 'w', respectively \
@@ -21,115 +16,121 @@ or in some cases, [VERB][NOUN][OBJECT] (e.g. 'attack thief with nasty knife').\
 The game will ignore the articles 'a', 'an', and 'the' (e.g. 'open the door' is the same as 'open door.').\n\n\
 To exit the game at any time, type 'exit' or 'quit'."
 
-wrap_width = 0								# We will eventually use this so that we can wrap text.
+player = Player()
+world = World()
 	
 def play():	
 	clear_screen()
+	print("--------------------------------------------------------")
 	print_wrap("Welcome to %s!" % game_name)
-	player = Player()
-	world = World()
+	print("--------------------------------------------------------")
+	print()
+	
+	turn_count = 0		# Tracking turn count may be used for some games.
 	
 	print_wrap(world.tile_at(player.x,player.y).intro_text())
 	
 	while True:
-		print("")							# Print a blank line for spacing purposes.
+		print()							# Print a blank line for spacing purposes.
 		[raw_input, parsed_input] = parse.get_command()
-		print("")							# Print a blank line for spacing purposes.
+		print()							# Print a blank line for spacing purposes.
 		
-		if(parsed_input):
-			if(len(parsed_input)==1):
-				if(parsed_input[0] == "help"):
-					print_wrap(help_text)
-				elif(parsed_input[0] == "check"):
-					print_wrap(world.tile_at(player.x,player.y).intro_text())
-				elif(parsed_input[0] == "exit" or parsed_input[0] == quit):
-					exit()
+		
+		if(debug_mode):	
+			print("--------------------------------------------------------")
+			print("RAW USER COMANDS: " + raw_input)
+			print("PARSED USER COMMANDS: " + str(parsed_input))
+			print("--------------------------------------------------------")
+			print()
+			
+
+		if(len(parsed_input) == 3):
+			[verb, noun1, noun2] = parsed_input
+			[turn_taken, result_text] = handle_input(verb, noun1, noun2)
+			if(turn_taken):
+				turn_count += 1
+			if(result_text):
+				if(isinstance(result_text, list)):	# Find out if there is more than one sentence returned.
+					for text in result_text:
+						print_wrap(text)
 				else:
-					print("I don't understand what you are trying to do. Please try again.")
-			elif(len(parsed_input) == 2):
-				if(parsed_input[0] == "go"):													### Command "go"
-					move_status = False
-					if(parsed_input[1] == "north"):
-						[move_status, move_description] = world.check_north(player.x, player.y)
-						print_wrap(move_description)
-						if(move_status):
-							player.move_north()
-					elif(parsed_input[1] == "south"):
-						[move_status, move_description] = world.check_south(player.x, player.y)
-						print_wrap(move_description)
-						if(move_status):
-							player.move_south()
-					elif(parsed_input[1] == "east"):
-						[move_status, move_description] = world.check_east(player.x, player.y)
-						print_wrap(move_description)
-						if(move_status):
-							player.move_east()
-					elif(parsed_input[1] == "west"):
-						[move_status, move_description] = world.check_west(player.x, player.y)
-						print_wrap(move_description)
-						if(move_status):
-							player.move_west()		
-					else:
-						print("I don't understand where you're trying to go.")
-					
-					
-					if(move_status):		# If we have successfully moved, give the player the new location's description.
-						print_wrap(world.tile_at(player.x,player.y).intro_text())
-						
-						
-						
-				elif(parsed_input[0] == "check"):													### Command "check"
-					if(parsed_input[1] == "inventory"):
-						player.print_inventory()
-					elif(parsed_input[1] == "around"):
-						print_wrap(world.tile_at(player.x,player.y).intro_text())
-					else:
-						print("I don't know what you're trying to look at.")
-						
-				else:
-					print("I don't understand what you are trying to do. Please try again.")
-			else:
-				print("I don't understand what you are trying to do. Please try again.")
-				
-				
-			if(debug_mode):	
-				print()
-				print("RAW USER COMANDS: " + raw_input)
-				print("PARSED USER COMMANDS: " + str(parsed_input))
-				#for word in parsed_input:
-				#	if(word):
-				#		print(word + " ")
-				#	else:
-				#		print("None")
+					print_wrap(result_text)
 		else:
 			print("Something seems to have gone wrong. Please try again.")
 			
-			
-			
-			
 		
-# These functions exist only to help make the text print nicer in the terminal.		
-def get_width():
-	dimensions = get_terminal_size()
-	global wrap_width 
-	if(dimensions[0] >= 20):
-		wrap_width = dimensions[0] - 5				# Get the width of the user's window so we can wrap text.
-	else:
-		wrap_width = dimensions[0]						
-	return dimensions
-    
-	
-def clear_screen():
-	terminal = get_width()
-   
-	for i in range(terminal[1]):
-		print("")									# There are fancier ways to clear a screen, but this aligns our text where we want it at the bottom of the window.
+def handle_input(verb, noun1, noun2):
+	if(verb == 'help'):
+		if(not noun1):
+			return [False, help_text]
+		else:
+			return [False, "I'm not sure what you need help with. Try using 'help' on its own."]
 
-		
-def print_wrap(text):
-	get_width()
-	text = dedent(text)
-	print(fill(text, wrap_width))
+			
+	elif(verb == 'exit'):
+		if(not noun1):
+			exit()
+		else:
+			return[False, "Are you trying to quit the game? If so, just type 'exit' on its own."]
+	
+	
+	elif(verb == 'go'):
+		if(not noun2):
+			if(noun1 == 'north'):
+				[move_status, move_description] = world.check_north(player.x, player.y)
+				if(move_status):
+					player.move_north()
+					return [True, [move_description, world.tile_at(player.x, player.y).intro_text()]]
+				else:
+					return [False, move_description]
+					
+			elif(noun1 == 'south'):
+				[move_status, move_description] = world.check_south(player.x, player.y)
+				if(move_status):
+					player.move_south()
+					return [True, [move_description, world.tile_at(player.x, player.y).intro_text()]]
+				else:
+					return [False, move_description]
+					
+			elif(noun1 == 'east'):
+				[move_status, move_description] = world.check_east(player.x, player.y)
+				if(move_status):
+					player.move_east()
+					return [True, [move_description, world.tile_at(player.x, player.y).intro_text()]]
+				else:
+					return [False, move_description]
+					
+			elif(noun1 == 'west'):
+				[move_status, move_description] = world.check_west(player.x, player.y)
+				if(move_status):
+					player.move_west()
+					return [True, [move_description, world.tile_at(player.x, player.y).intro_text()]]
+				else:
+					return [False, move_description]		
+					
+			else:
+				return [False, "I'm not sure where you're trying to go."]
+				
+		else:
+			return [False, "Whatever you are trying to do is too complicated for me to understand. Please try again."]
+			
+			
+	elif(verb == 'check'):
+		if(not noun2):
+			if(noun1 == 'none' or noun1 == 'around' or noun1 == 'room' or noun1 == 'surroundings'):
+				return [False, world.tile_at(player.x, player.y).intro_text()]
+			elif(noun1 == 'inventory' or 'pockets'):
+				player.print_inventory();
+				return [False, '']	# No need to return any text because the player.print_inventory() function already did.
+			else:
+				return [False, "I'm not sure what you are trying to look at."]
+		else:
+			return [False, "I think you are trying to look at something, but your phrasing is too complicated. Please try again."]
+			
+	elif(verb):
+		return [False, "I'm not sure how to %s that." % verb]
+	else:
+		return [False, "I have no idea what you are trying to do. Please try again."]
  
 
 ### Play the game.
