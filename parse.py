@@ -13,6 +13,7 @@ verbs = {'go': ['go', 'go to', 'walk', 'head', 'move'], \
 	'equip': ['equip', 'put on', 'wear'], \
 	'unequip': ['unequip', 'take off', 'remove'], \
 	'use': ['use', 'apply'], \
+	'consume': ['consume', 'eat', 'drink'], \
 	'check': ['check', 'look', 'look at', 'look in', 'examine', 'inspect'], \
 	'attack': ['attack', 'fight', 'kill']}
 	

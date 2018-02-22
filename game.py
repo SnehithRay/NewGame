@@ -122,9 +122,9 @@ def handle_input(verb, noun1, noun2):
 			
 	elif(verb == 'check'):
 		if(not noun2):
-			if(noun1 == 'none' or noun1 == 'around' or noun1 == 'room' or noun1 == 'surroundings'):
+			if(noun1 == None or noun1 == 'around' or noun1 == 'room' or noun1 == 'surroundings'):
 				return [False, world.tile_at(player.x, player.y).intro_text()]
-			elif(noun1 == 'inventory' or 'pockets'):
+			elif(noun1 == 'inventory' or noun1 == 'pockets'):
 				player.print_inventory();
 				return [False, '']	# No need to return any text because the player.print_inventory() function already did.
 			else:

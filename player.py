@@ -7,8 +7,8 @@ class Player:
 						items.Crusty_Bread()]
 		self.gold = 5
 		self.hp = 100
-		self.x = 1
-		self.y = 2
+		self.x = 2
+		self.y = 3
 
 	def print_inventory(self):
 		print("Inventory:")
