@@ -21,7 +21,7 @@ class Item:
 		return self.name	
 
 	def room_text(self):
-		if(not is_dropped):					# We may want to have a different description for a weapon the first time it is encountered vs. after it has been dropped.
+		if(not self.is_dropped):					# We may want to have a different description for a weapon the first time it is encountered vs. after it has been dropped.
 			return self.intro_description
 		else:
 			return self.dropped_description
@@ -30,10 +30,21 @@ class Item:
 		return self.description
 		
 	def drop(self):
-		is_dropped = True
+		self.is_dropped = True
 		
 	def pick_up(self):
-		is_dropped = False
+		self.is_dropped = False
+		
+	def handle_input(self, verb, noun1, noun2, inventory):
+		return [False, None, inventory]
+		
+		
+class Iron_Key(Item):
+	name = "Iron key"
+	
+	description = "An old iron key. It looks like it would open a massive door."
+	dropped_description = "An old iron key is lying on the ground."		
+		
 		
 class Consumable(Item):
 	consume_description = "You should define flavor text for consuming this item in its subclass."
@@ -46,19 +57,22 @@ class Consumable(Item):
 		return [self.consume_description, self.healing_value]
 			
 
-class Crusty_Bread(Item):
+class Crusty_Bread(Consumable):
 	name = "Crusty bread"
 	healing_value = 10
 	
 	description = "Just a stale old piece of bread."
 	dropped_description = "A piece of crusty bread is lying on the ground."
 			
-class Red_Potion(Item):
+class Red_Potion(Consumable):
 	name = "Red potion"
 	healing_value = 75
 	
 	description = "A bottle of mysterious, glowing red potion. For some reason it looks healthy."
 	dropped_description = "A bottle of red potion is glowing on the ground."
+	
+	
+	
 
 class Weapon(Item):
 	equip_description = "You should define flavor text for equipping this item in its subclass."

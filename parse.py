@@ -1,6 +1,6 @@
 import string				# Used to strip user inputs of punctuation.
 
-game_commands = {'help': ['help'], 'exit': ['exit', 'quit']}
+game_commands = {'help': ['help'], 'exit': ['exit', 'quit'], 'debug': ['debug']}
 
 verbs = {'go': ['go', 'go to', 'walk', 'head', 'move'], \
 	'take': ['take', 'pick up', 'grab', 'get'], \
@@ -14,6 +14,8 @@ verbs = {'go': ['go', 'go to', 'walk', 'head', 'move'], \
 	'unequip': ['unequip', 'take off', 'remove'], \
 	'use': ['use', 'apply'], \
 	'consume': ['consume', 'eat', 'drink'], \
+	'unlock': ['unlock'], \
+	'lock': ['lock'], \
 	'check': ['check', 'look', 'look at', 'look in', 'examine', 'inspect'], \
 	'attack': ['attack', 'fight', 'kill']}
 	

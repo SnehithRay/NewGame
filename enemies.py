@@ -7,6 +7,9 @@ class Enemy:
 
 	def is_alive(self):
 		return self.hp > 0
+		
+	def handle_input(self, verb, noun1, noun2, inventory):
+		return [False, None, inventory]
 
 
 class GiantSpider(Enemy):

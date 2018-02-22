@@ -45,3 +45,10 @@ class Player:
 
 	def move_west(self):
 		self.move(dx=-1, dy=0)
+		
+	def handle_input(self, verb, noun1, noun2):
+		if(verb == 'check'):
+			for item in self.inventory:
+				if item.name.lower() == noun1:
+					return [True, item.check_text()]
+		return [False, ""]

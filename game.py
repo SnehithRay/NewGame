@@ -14,7 +14,7 @@ Try single-word commands like 'inventory' or 'west' (or their counterpart abbrev
 to get started. For more complex interactions, use commands of the format [VERB][NOUN] (e.g. 'open door', \
 or in some cases, [VERB][NOUN][OBJECT] (e.g. 'attack thief with nasty knife').\
 The game will ignore the articles 'a', 'an', and 'the' (e.g. 'open the door' is the same as 'open door.').\n\n\
-To exit the game at any time, type 'exit' or 'quit'."
+To toggle output from the game parser, type 'debug'. To exit the game at any time, type 'exit' or 'quit'."
 
 victory_text = "Thank you for playing! I hope you enjoyed this game engine demo - I look forward to seeing the \
 				games you create using this as an example!"
@@ -56,13 +56,24 @@ def play():
 				if(isinstance(result_text, list)):	# Find out if there is more than one sentence returned.
 					for text in result_text:
 						print_wrap(text)
+						if("Victory is yours!" in text):
+							print()
+							print_wrap(victory_text)
+							print()
+							exit()
 				else:
 					print_wrap(result_text)
+					if("Victory is yours!" in result_text):
+						print()
+						print_wrap(victory_text)
+						print()
+						exit()
 		else:
 			print("Something seems to have gone wrong. Please try again.")
 			
 		
 def handle_input(verb, noun1, noun2):
+	global debug_mode
 	if(verb == 'help'):
 		if(not noun1):
 			return help_text
@@ -75,6 +86,17 @@ def handle_input(verb, noun1, noun2):
 			exit()
 		else:
 			return "Are you trying to quit the game? If so, just type 'exit' on its own."
+			
+	elif(verb == 'debug'):
+		if(not noun1):
+			if(debug_mode):
+				debug_mode = False
+				return "Debug mode turned off."
+			else:
+				debug_mode = True
+				return "Debug mode turned on."
+		else:
+			return "I don't know what you are trying to debug. If you want to toggle the parser's output text, just type 'debug' on its own."
 	
 	
 	elif(verb == 'go'):
@@ -126,12 +148,31 @@ def handle_input(verb, noun1, noun2):
 				player.print_inventory();
 				return ''	# No need to return any text because the player.print_inventory() function already did.
 			else:
-				return "I'm not sure what you are trying to look at."
+				[status, description] = player.handle_input(verb, noun1, noun2)
+				if(status):
+					return description
+				else:
+					[status, description, inventory] = world.tile_at(player.x, player.y).handle_input(verb, noun1, noun2, player.inventory)
+					if(status):
+						return description
+					else:
+						return "I'm not sure what you are trying to look at."
 		else:
 			return "I think you are trying to look at something, but your phrasing is too complicated. Please try again."
+
+
 			
 	elif(verb):
-		return "I'm not sure how to %s that." % verb
+		[status, description] = player.handle_input(verb, noun1, noun2)
+		if(status):
+			return description
+		else:
+			[status, description, inventory] = world.tile_at(player.x, player.y).handle_input(verb, noun1, noun2, player.inventory)
+			if(status):
+				player.inventory = inventory
+				return description
+			else:
+				return "I'm not sure what you are trying to %s." % verb
 	else:
 		return "I have no idea what you are trying to do. Please try again."
  

@@ -2,57 +2,102 @@ import items
 import barriers
 
 class MapTile:
+	description = "Do not create raw MapTiles! Create a subclass instead!"
+	
 	def __init__(self, x=0, y=0, barriers = [], items = [], enemies = []):
 		self.x = x
 		self.y = y
-		self.contents = {'barriers': barriers, 'items': items, 'enemies': enemies}	# A dict containing all the contents of the room.
+		self.contents = {'barriers': barriers, 'enemies': enemies, 'items': items}	# A dict containing all the contents of the room.
 	
 	def intro_text(self):
-		raise NotImplementedError("Create a subclass instead!")
+		text = self.description
+		for barrier in self.contents['barriers']:
+			if(barrier.verbose):
+				text += " " + barrier.description()
+		#for enemy in self.contents['enemies']:
+		#	text += " " + enemy.description()
+		for item in self.contents['items']:
+			text += " " + item.room_text()
+		return text
+		
+	def handle_input(self, verb, noun1, noun2, inventory):
+		if(not noun2):
+			if(verb == 'check'):
+				for item in self.contents['items']:
+					if(item.name.lower() == noun1):
+						return [True, item.check_text(), inventory]
+			elif(verb == 'take'):
+				for index in range(len(self.contents['items'])):
+					if(self.contents['items'][index].name.lower() == noun1):
+						pickup_text = "You picked up the %s." % self.contents['items'][index].name
+						inventory.append(self.contents['items'][index])
+						self.contents['items'].pop(index)
+						return [True, pickup_text, inventory]
+			elif(verb == 'drop'):
+				for index in range(len(inventory)):
+					if(inventory[index].name.lower() == noun1):
+						inventory[index].is_dropped = True
+						drop_text = "You dropped up the %s." % inventory[index].name
+						if(len(self.contents['items']) > 0):
+							self.contents['items'].append(inventory[index])
+						else:
+							self.contents['items'] = [inventory[index]]
+						inventory.pop(index)
+						return [True, drop_text, inventory]
+
+		for key in self.contents.keys():
+			for item in self.contents[key]:
+				[status, description, inventory] = item.handle_input(verb, noun1, noun2, inventory)
+				if(status):
+					return [status, description, inventory]
+			
+		return [False, "", inventory]
 
 
 class StartTile(MapTile):
-	def intro_text(self):
-		return """You find yourself in a cave with a flickering torch on the wall.
+	description = """You find yourself in a cave with a flickering torch on the wall.
 		You can make out a path to the east and to the west, each equally as dark and foreboding.
 		"""
 
 class Corridor(MapTile):
-	def intro_text(self):
-		return """You find yourself in a poorly lit corridor."""
+	description = """You find yourself in a poorly lit corridor."""
 		
 class StoreRoom(MapTile):
-	def intro_text(self):
-		return """You seem to have entered an underground storeroom!"""
+	description = """You seem to have entered an underground storeroom!"""
 		
-class Expanse(MapTile):
-	def intro_text(self):
-		return """You find yourself in an expansive cavern, with walls stretching out nearly as far as the eye can see."""
+class ExpanseSW(MapTile):
+	description = """You find yourself in an expansive cavern, with walls stretching out nearly as far as the eye can see. The room opens before you to the northeast."""
+	
+class ExpanseSE(MapTile):
+	description = """You find yourself in an expansive cavern, with walls stretching out nearly as far as the eye can see. The room opens before you to the northwest. There is a small corridor leading to the east from here."""
+	
+class ExpanseNW(MapTile):
+	description = """You find yourself in an expansive cavern, with walls stretching out nearly as far as the eye can see. The room opens before you to the southeast. There is a small corridor leading to the north from here."""
+	
+class ExpanseNE(MapTile):
+	description = """You find yourself in an expansive cavern, with walls stretching out nearly as far as the eye can see. The room opens before you to the southwest. A small nook lies to your east."""
 
 class Nook(MapTile):
-	def intro_text(self):
-		return """A dank nook of the cave lies before you. The only way out is back the way you came."""
+	description = """You have entered a dank nook of the cave. The only way out is back the way you came."""
 		
 		
 class NearVictory(MapTile):
-	def intro_text(self):
-		return """You can see a light to the east at the end of this corridor. Could that be your way out?"""
+	description = """You can see a light to the east at the end of this corridor. Could that be your way out?"""
 
 
 class VictoryTile(MapTile):
-	def intro_text(self):
-		return """You see a bright light in the distance...
+	description = """You see a bright light in the distance...
 		It grows as you get closer! It's sunlight!	
 		Victory is yours!
 		"""
 		
 class World:									# I choose to define the world as a class. This makes it more straightforward to import into the game.
 	map = [
-		[Corridor(),												NearVictory(),												VictoryTile(),															Corridor(), 																		Corridor()],
-		[Expanse(),													Expanse(),		 											Nook(), 																Corridor(barriers = [barriers.Wall('e')]),		 									Corridor(barriers = [barriers.Wall('w')])],
-		[Expanse(),													Expanse(),	 												Corridor(barriers = [barriers.Wall('n'), barriers.Wall('s')]), 															Corridor(barriers = [barriers.Wall('e'), barriers.Wall('s')]),		 				Corridor(barriers = [barriers.Wall('w')])],
-		[None,														Corridor(barriers = [barriers.Wall('n')]),					StartTile(barriers = [barriers.Wall('s'), barriers.Wall('n')]), 		Corridor(barriers = [barriers.Wall('n')]), 											Corridor()],
-		[None,														Corridor(barriers = [barriers.WoodenDoor('e')]),			StoreRoom(barriers = [barriers.Wall('n')]),								None,																				None]
+		[Corridor(barriers = [barriers.LockedDoor('e')]),			NearVictory(barriers = [barriers.Wall('s')]),				VictoryTile(),																																										Corridor(barriers = [barriers.Wall('w')]), 											Corridor()],
+		[ExpanseNW(),												ExpanseNE(barriers = [barriers.Wall('n')]),	 				Nook(barriers = [barriers.Wall('n'), barriers.Wall('s'), barriers.Wall('e')], items = [items.Iron_Key("An old iron key is just sitting in front of you on a stalactite.")]), 		Corridor(barriers = [barriers.Wall('e'), barriers.Wall('w')]),						Corridor(barriers = [barriers.Wall('w')])],
+		[ExpanseSW(),												ExpanseSE(barriers = [barriers.Wall('s')]), 				Corridor(barriers = [barriers.Wall('n'), barriers.Wall('s')]), 																														Corridor(barriers = [barriers.Wall('e'), barriers.Wall('s')]),		 				Corridor(barriers = [barriers.Wall('w')])],
+		[None,														Corridor(barriers = [barriers.Wall('n')]),					StartTile(barriers = [barriers.Wall('s'), barriers.Wall('n')]), 																													Corridor(barriers = [barriers.Wall('n')]), 											Corridor()],
+		[None,														Corridor(barriers = [barriers.WoodenDoor('e')]),			StoreRoom(barriers = [barriers.Wall('n')], items = [items.RustySword("A rusty sword is propped against the wall")]),																																			None,																				None]
 	]
 
 	def __init__(self):
@@ -77,10 +122,11 @@ class World:									# I choose to define the world as a class. This makes it mo
 				
 		if y-1 < 0:
 			room = None
-		try:
-			room = self.map[y-1][x]
-		except IndexError:
-			room = None
+		else:
+			try:
+				room = self.map[y-1][x]
+			except IndexError:
+				room = None
 		
 		if(room):
 			return [True, "You head to the north."]
@@ -94,10 +140,11 @@ class World:									# I choose to define the world as a class. This makes it mo
 				
 		if y+1 < 0:
 			room = None
-		try:
-			room = self.map[y+1][x]
-		except IndexError:
-			room = None
+		else:
+			try:
+				room = self.map[y+1][x]
+			except IndexError:
+				room = None
 		
 		if(room):
 			return [True, "You head to the south."]
@@ -111,10 +158,11 @@ class World:									# I choose to define the world as a class. This makes it mo
 	
 		if x-1 < 0:
 			room = None
-		try:
-			room = self.map[y][x-1]
-		except IndexError:
-			room = None
+		else:
+			try:
+				room = self.map[y][x-1]
+			except IndexError:
+				room = None
 		
 		if(room):
 			return [True, "You head to the west."]
@@ -128,10 +176,11 @@ class World:									# I choose to define the world as a class. This makes it mo
 				
 		if x+1 < 0:
 			room = None
-		try:
-			room = self.map[y][x+1]
-		except IndexError:
-			room = None
+		else:
+			try:
+				room = self.map[y][x+1]
+			except IndexError:
+				room = None
 		
 		if(room):
 			return [True, "You head to the east."]
