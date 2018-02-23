@@ -80,6 +80,8 @@ class LockedDoor(Barrier):
 		
 	def handle_input(self, verb, noun1, noun2, inventory):
 		if(noun1 == 'door' or noun1 == 'locked door'):
+			if(verb == 'check'):
+				return [True, self.description(), inventory]
 			if(verb == 'open'):
 				if(self.state == 'closed'):
 					if(self.locked):

@@ -1,6 +1,8 @@
 import items
 import barriers
 
+from random import randint 	# Used to generate random integers.
+
 class MapTile:
 	description = "Do not create raw MapTiles! Create a subclass instead!"
 	barriers = []
@@ -90,9 +92,25 @@ class StartTile(MapTile):
 
 class Corridor(MapTile):
 	description = """You find yourself in a poorly lit corridor."""
+	flavor_text = ["This portion of the cave seems particularly musty.", "You head nearly brushes the low ceiling.", "The sound of bats in the distance gives you a chill."]
+	
+	def __init__(self, x=0, y=0, barriers = [], items = [], enemies = []):	# Since this tile appears so much, I gave it its own __init__() function to add random flavor text to some of the tiles.
+		self.x = x
+		self.y = y
+		for barrier in barriers:
+			self.add_barrier(barrier)
+		for item in items:
+			self.add_item(item)
+		for enemy in enemies:
+			self.add_enemy(enemy)
+			
+		num = randint(0,len(self.flavor_text)*3-1)	# Generate a random number. Based on our range, 1 in 3 corridors will have added flavor text.
+		if(num < len(self.flavor_text)):
+			self.description += " " + self.flavor_text[num]
 	
 	def intro_text(self):	# Since this tile appears so much, I gave it its own intro_text function to make its text more descriptive.
 		text = self.description
+			
 		directions_clear = ['north', 'south', 'east', 'west']
 		for barrier in self.barriers:
 			try:
@@ -109,7 +127,7 @@ class Corridor(MapTile):
 		elif(len(directions_clear) == 3):
 			text += " There are clear pathways leading to the %s, %s, and %s." % (directions_clear[0], directions_clear[1], directions_clear[2])
 		elif(len(directions_clear) == 4):
-			text += " It appears that your path is clear in all directions." 	
+			text += " It appears that your path is clear in all directions." 
 			
 		for barrier in self.barriers:
 			if(barrier.verbose):
