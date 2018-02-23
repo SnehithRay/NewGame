@@ -37,7 +37,7 @@ class MapTile:
 				for index in range(len(inventory)):
 					if(inventory[index].name.lower() == noun1):
 						inventory[index].is_dropped = True
-						drop_text = "You dropped up the %s." % inventory[index].name
+						drop_text = "You dropped the %s." % inventory[index].name
 						if(len(self.contents['items']) > 0):
 							self.contents['items'].append(inventory[index])
 						else:
@@ -97,7 +97,7 @@ class World:									# I choose to define the world as a class. This makes it mo
 		[ExpanseNW(),												ExpanseNE(barriers = [barriers.Wall('n')]),	 				Nook(barriers = [barriers.Wall('n'), barriers.Wall('s'), barriers.Wall('e')], items = [items.Iron_Key("An old iron key is just sitting in front of you on a stalactite.")]), 		Corridor(barriers = [barriers.Wall('e'), barriers.Wall('w')]),						Corridor(barriers = [barriers.Wall('w')])],
 		[ExpanseSW(),												ExpanseSE(barriers = [barriers.Wall('s')]), 				Corridor(barriers = [barriers.Wall('n'), barriers.Wall('s')]), 																														Corridor(barriers = [barriers.Wall('e'), barriers.Wall('s')]),		 				Corridor(barriers = [barriers.Wall('w')])],
 		[None,														Corridor(barriers = [barriers.Wall('n')]),					StartTile(barriers = [barriers.Wall('s'), barriers.Wall('n')]), 																													Corridor(barriers = [barriers.Wall('n')]), 											Corridor()],
-		[None,														Corridor(barriers = [barriers.WoodenDoor('e')]),			StoreRoom(barriers = [barriers.Wall('n')], items = [items.RustySword("A rusty sword is propped against the wall")]),																																			None,																				None]
+		[None,														Corridor(barriers = [barriers.WoodenDoor('e')]),			StoreRoom(barriers = [barriers.Wall('n')], items = [items.RustySword("A rusty sword is propped against the wall.")]),																																			None,																				None]
 	]
 
 	def __init__(self):
