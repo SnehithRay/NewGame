@@ -83,7 +83,36 @@ class StartTile(MapTile):
 		"""
 
 class Corridor(MapTile):
-	description = """You find yourself in a poorly lit corridor."""			
+	description = """You find yourself in a poorly lit corridor."""
+	
+	def intro_text(self):	# Since this tile appears so much, I gave it its own intro_text function to make its text more descriptive.
+		text = self.description
+		directions_clear = ['north', 'south', 'east', 'west']
+		for barrier in self.barriers:
+			try:
+				directions_clear.pop(directions_clear.index(barrier.direction))		# Attempt to remove the barrier's direction from the list of clear directions.
+			except:
+				pass		# If the barrier direction is not in the list of clear directions already, then we ignore it.
+		#for enemy in self.contents['enemies']:
+		#	text += " " + enemy.description()
+		
+		if(len(directions_clear) == 1):
+			text += " There is a clear pathway leading to the %s." % directions_clear[0]
+		elif(len(directions_clear) == 2):
+			text += " There are clear pathways leading to the %s and %s." % (directions_clear[0], directions_clear[1])
+		elif(len(directions_clear) == 3):
+			text += " There are clear pathways leading to the %s, %s, and %s." % (directions_clear[0], directions_clear[1], directions_clear[2])
+		elif(len(directions_clear) == 4):
+			text += " It appears that your path is clear in all directions." 	
+			
+		for barrier in self.barriers:
+			if(barrier.verbose):
+				text += " " + barrier.description()
+				
+		for item in self.items:
+			text += " " + item.room_text()
+		return text
+	
 		
 class StoreRoom(MapTile):
 	items = [items.RustySword("A rusty sword is propped against the wall.")]
@@ -132,6 +161,9 @@ class World:									# I choose to define the world as a class. This makes it mo
 				if(self.map[i][j]):				# the tile's internal coordinates.
 					self.map[i][j].x = j
 					self.map[i][j].y = i
+					
+					self.add_implied_barriers(j,i)	# If there are implied barriers (e.g. edge of map, adjacent None room, etc.) add a Wall.
+						
 					
 	def tile_at(self, x, y):
 		if x < 0 or y < 0:
@@ -212,3 +244,41 @@ class World:									# I choose to define the world as a class. This makes it mo
 			return [True, "You head to the east."]
 		else:
 			return [False, "There doesn't seem to be a path to the east."]
+			
+	def add_implied_barriers(self, x, y):
+
+		[status, text] = self.check_north(x,y)
+		barrier_present = False
+		if(not status):
+			for barrier in self.map[y][x].barriers:
+				if barrier.direction == 'north':
+					barrier_present = True
+			if(not barrier_present):
+				self.map[y][x].add_barrier(barriers.Wall('n'))	
+				
+		[status, text] = self.check_south(x,y)
+		barrier_present = False
+		if(not status):
+			for barrier in self.map[y][x].barriers:
+				if barrier.direction == 'south':
+					barrier_present = True
+			if(not barrier_present):
+				self.map[y][x].add_barrier(barriers.Wall('s'))	
+			
+		[status, text] = self.check_east(x,y)
+		barrier_present = False
+		if(not status):
+			for barrier in self.map[y][x].barriers:
+				if barrier.direction == 'east':
+					barrier_present = True
+			if(not barrier_present):
+				self.map[y][x].add_barrier(barriers.Wall('e'))	
+			
+		[status, text] = self.check_west(x,y)
+		barrier_present = False
+		if(not status):
+			for barrier in self.map[y][x].barriers:
+				if barrier.direction == 'west':
+					barrier_present = True
+			if(not barrier_present):
+				self.map[y][x].add_barrier(barriers.Wall('w'))	
