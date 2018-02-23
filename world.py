@@ -86,6 +86,8 @@ class Corridor(MapTile):
 	description = """You find yourself in a poorly lit corridor."""			
 		
 class StoreRoom(MapTile):
+	items = [items.RustySword("A rusty sword is propped against the wall.")]
+	
 	description = """You seem to have entered an underground storeroom!"""
 		
 class ExpanseSW(MapTile):
@@ -101,6 +103,7 @@ class ExpanseNE(MapTile):
 	description = """You find yourself in an expansive cavern, with walls stretching out nearly as far as the eye can see. The room opens before you to the southwest. A small nook lies to your east."""
 
 class Nook(MapTile):
+	items = [items.Iron_Key("An old iron key is just sitting in front of you on a stalactite.")]
 	description = """You have entered a dank nook of the cave. The only way out is back the way you came."""
 		
 		
@@ -117,10 +120,10 @@ class VictoryTile(MapTile):
 class World:									# I choose to define the world as a class. This makes it more straightforward to import into the game.
 	map = [
 		[Corridor(barriers = [barriers.LockedDoor('e')]),			NearVictory(barriers = [barriers.Wall('s')]),				VictoryTile(),																																										Corridor(barriers = [barriers.Wall('w')]), 											Corridor()],
-		[ExpanseNW(),												ExpanseNE(barriers = [barriers.Wall('n')]),	 				Nook(barriers = [barriers.Wall('n'), barriers.Wall('s'), barriers.Wall('e')], items = [items.Iron_Key("An old iron key is just sitting in front of you on a stalactite.")]), 		Corridor(barriers = [barriers.Wall('e'), barriers.Wall('w')]),						Corridor(barriers = [barriers.Wall('w')])],
+		[ExpanseNW(),												ExpanseNE(barriers = [barriers.Wall('n')]),	 				Nook(barriers = [barriers.Wall('n'), barriers.Wall('s'), barriers.Wall('e')]), 		Corridor(barriers = [barriers.Wall('e'), barriers.Wall('w')]),						Corridor(barriers = [barriers.Wall('w')])],
 		[ExpanseSW(),												ExpanseSE(barriers = [barriers.Wall('s')]), 				Corridor(barriers = [barriers.Wall('n'), barriers.Wall('s')]), 																														Corridor(barriers = [barriers.Wall('e'), barriers.Wall('s')]),		 				Corridor(barriers = [barriers.Wall('w')])],
 		[None,														Corridor(barriers = [barriers.Wall('n')]),					StartTile(barriers = [barriers.Wall('s'), barriers.Wall('n')]), 																													Corridor(barriers = [barriers.Wall('n')]), 											Corridor()],
-		[None,														Corridor(barriers = [barriers.WoodenDoor('e')]),			StoreRoom(barriers = [barriers.Wall('n')], items = [items.RustySword("A rusty sword is propped against the wall.")]),																																			None,																				None]
+		[None,														Corridor(barriers = [barriers.WoodenDoor('e')]),			StoreRoom(barriers = [barriers.Wall('n')]),																																			None,																				None]
 	]
 
 	def __init__(self):
