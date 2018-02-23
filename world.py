@@ -55,6 +55,12 @@ class MapTile:
 				[status, description, inventory] = item.handle_input(verb, noun1, noun2, inventory)
 				if(status):
 					return [status, description, inventory]
+					
+		for list in [self.barriers, self.items, self.enemies]:			# Added to give the player feedback if they have part of the name of an object correct.
+			for item in list:
+				if(item.name):
+					if(noun1 in item.name):
+						return [True, "Be more specific.", inventory]
 			
 		return [False, "", inventory]
 		

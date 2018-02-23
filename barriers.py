@@ -42,6 +42,8 @@ class WoodenDoor(Barrier):
 		
 	def handle_input(self, verb, noun1, noun2, inventory):
 		if(noun1 == 'door' or noun1 == 'wooden door'):
+			if(verb == 'check'):
+				return [True, self.description(), inventory]
 			if(verb == 'open'):
 				if(self.state == 'closed'):
 					self.state = 'open'
