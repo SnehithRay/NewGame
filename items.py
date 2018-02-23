@@ -40,7 +40,7 @@ class Item:
 		
 		
 class Iron_Key(Item):
-	name = "Iron key"
+	name = "iron key"
 	
 	description = "An old iron key. It looks like it would open a massive door."
 	dropped_description = "An old iron key is lying on the ground."		
@@ -58,14 +58,14 @@ class Consumable(Item):
 			
 
 class Crusty_Bread(Consumable):
-	name = "Crusty bread"
+	name = "crusty bread"
 	healing_value = 10
 	
 	description = "Just a stale old piece of bread."
 	dropped_description = "A piece of crusty bread is lying on the ground."
 			
 class Red_Potion(Consumable):
-	name = "Red potion"
+	name = "red potion"
 	healing_value = 75
 	
 	description = "A bottle of mysterious, glowing red potion. For some reason it looks healthy."
@@ -91,7 +91,7 @@ class Weapon(Item):
 
 
 class Rock(Weapon):
-	name = "Rock"
+	name = "rock"
 	
 	description = "A fist-sized rock, suitable for bludgeoning."
 	dropped_description = "A fist-sized rock lies on the ground. It looks like it would be suitable for bludgeoning someone."
@@ -102,7 +102,7 @@ class Rock(Weapon):
 
 
 class Dagger(Weapon):
-	name = "Dagger"
+	name = "dagger"
 	
 	description = "A small dagger with some rust. It looks pretty sharp."
 	dropped_description = "A dagger lies on the ground. It looks somewhat more dangerous than a rock."
@@ -113,7 +113,7 @@ class Dagger(Weapon):
 
 
 class RustySword(Weapon):
-	name = "Rusty sword"
+	name = "rusty sword"
 	
 	description = "A rusty sword. Despite its age, it still looks deadly."
 	dropped_description = "There is a rusty sword lying on the ground."

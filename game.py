@@ -58,6 +58,7 @@ def play():
 						print_wrap(text)
 						if("Victory is yours!" in text):
 							print()
+							print_wrap("========================================================")
 							print_wrap(victory_text)
 							print()
 							exit()
@@ -65,6 +66,7 @@ def play():
 					print_wrap(result_text)
 					if("Victory is yours!" in result_text):
 						print()
+						print_wrap("========================================================")
 						print_wrap(victory_text)
 						print()
 						exit()

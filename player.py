@@ -13,7 +13,7 @@ class Player:
 	def print_inventory(self):
 		print("Inventory:")
 		for item in self.inventory:
-			print('* ' + str(item))
+			print('* ' + str(item).title())
 			best_weapon = self.most_powerful_weapon()
 		print("* %i Gold" % self.gold)
 		print("Your best weapon is your {}".format(best_weapon))
