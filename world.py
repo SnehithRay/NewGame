@@ -165,7 +165,7 @@ class ExpanseNE(MapTile):
 
 class Nook(MapTile):
 	items = [items.Iron_Key("An old iron key is just sitting in front of you on a stalactite.")]
-	description = """You have entered a dank nook of the cave. The only way out is back the way you came."""
+	description = """You have entered a shadowy nook of the cave. The only way out is back the way you came."""
 		
 		
 class NearVictory(MapTile):

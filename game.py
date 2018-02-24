@@ -16,22 +16,15 @@ or in some cases, [VERB][NOUN][OBJECT] (e.g. 'attack thief with nasty knife').\
 The game will ignore the articles 'a', 'an', and 'the' (e.g. 'open the door' is the same as 'open door.').\n\n\
 To toggle output from the game parser, type 'debug'. To exit the game at any time, type 'exit' or 'quit'."
 
-victory_text = "Thank you for playing! I hope you enjoyed this game engine demo - I look forward to seeing the \
-				games you create using this as an example!"
+victory_text = ["Thank you for playing!", \
+				"I hope you enjoyed this game engine demo.", \
+				"I look forward to seeing the games you create using this as an example!"]
 
 player = Player()
 world = World()
 	
 def play():	
-	clear_screen()
-	print_center("========================================================")
-	print()
-	print_center("WELCOME TO %s!" % game_name.upper())
-	print()
-	print_center("========================================================")
-	print()
-	
-	turn_count = 0		# Tracking turn count may be used for some games.
+	print_welcome_text()
 	
 	print_wrap(world.tile_at(player.x,player.y).intro_text())
 	
@@ -57,19 +50,11 @@ def play():
 					for text in result_text:
 						print_wrap(text)
 						if("Victory is yours!" in text):
-							print()
-							print_wrap("========================================================")
-							print_wrap(victory_text)
-							print()
-							exit()
+							print_victory_text()
 				else:
 					print_wrap(result_text)
 					if("Victory is yours!" in result_text):
-						print()
-						print_wrap("========================================================")
-						print_wrap(victory_text)
-						print()
-						exit()
+						print_victory_text()
 		else:
 			print("Something seems to have gone wrong. Please try again.")
 			
@@ -180,6 +165,24 @@ def handle_input(verb, noun1, noun2):
 	else:
 		return "I have no idea what you are trying to do. Please try again."
  
+def print_welcome_text():
+	clear_screen()
+	print_center("========================================================")
+	print()
+	print_center("WELCOME TO %s!" % game_name.upper())
+	print()
+	print_center("========================================================")
+	print()
+	
+def print_victory_text():
+	print()
+	print_center("========================================================")
+	print()
+	for line in victory_text:
+		print_center(line)
+	print()
+	print_center("========================================================")
+	exit()
 
 ### Play the game.
 play()
