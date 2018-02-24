@@ -39,10 +39,13 @@ class MapTile:
 			elif(verb == 'take'):
 				for index in range(len(self.items)):
 					if(self.items[index].name.lower() == noun1):
-						pickup_text = "You picked up the %s." % self.items[index].name
-						inventory.append(self.items[index])
-						self.items.pop(index)
-						return [True, pickup_text, inventory]
+						if(isinstance(self.items[index], items.Item)):
+							pickup_text = "You picked up the %s." % self.items[index].name
+							inventory.append(self.items[index])
+							self.items.pop(index)
+							return [True, pickup_text, inventory]
+						else:
+							return [True, "The %s is too heavy to pick up." % self.items[index].name, inventory]
 			elif(verb == 'drop'):
 				for index in range(len(inventory)):
 					if(inventory[index].name.lower() == noun1):
@@ -92,7 +95,9 @@ class StartTile(MapTile):
 
 class Corridor(MapTile):
 	description = """You find yourself in a poorly lit corridor."""
-	flavor_text = ["This portion of the cave seems particularly musty.", "You head nearly brushes the low ceiling.", "The sound of bats in the distance gives you a chill."]
+	flavor_text = ["This portion of the cave seems particularly musty.", \
+				"You head nearly brushes the low ceiling.", \
+				"The sound of bats in the distance gives you a chill."]
 	
 	def __init__(self, x=0, y=0, barriers = [], items = [], enemies = []):	# Since this tile appears so much, I gave it its own __init__() function to add random flavor text to some of the tiles.
 		self.x = x
@@ -139,7 +144,10 @@ class Corridor(MapTile):
 	
 		
 class StoreRoom(MapTile):
-	items = [items.RustySword("A rusty sword is propped against the wall.")]
+	items = [items.Rusty_Sword("A rusty sword is propped against a shelf in the corner of the room."), \
+			items.Red_Potion("A glowing bottle of mysterious red potion sits on one of the shelves."), \
+			items.Old_Chest([items.Mountain_of_Gold()]), \
+			items.Gold_Coins("A shiny handful of gold coins is on the ground near the chest.")]
 	
 	description = """You seem to have entered an underground storeroom!"""
 		

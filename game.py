@@ -73,6 +73,8 @@ def play():
 		else:
 			print("Something seems to have gone wrong. Please try again.")
 			
+		player.update_inventory()
+			
 		
 def handle_input(verb, noun1, noun2):
 	global debug_mode
