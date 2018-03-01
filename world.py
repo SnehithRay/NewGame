@@ -1,6 +1,7 @@
 import items
 import enemies
 import barriers
+import npcs
 
 from random import randint 	# Used to generate random integers.
 
@@ -9,6 +10,7 @@ class MapTile:
 	barriers = []
 	enemies = []
 	items = []
+	npcs = []
 	
 	def __init__(self, x=0, y=0, barriers = [], items = [], enemies = [], npcs = []):
 		self.x = x
@@ -19,6 +21,8 @@ class MapTile:
 			self.add_item(item)
 		for enemy in enemies:
 			self.add_enemy(enemy)
+		for npc in npcs:
+			self.add_npc(npc)
 	
 	def intro_text(self):
 		text = self.description
@@ -34,6 +38,8 @@ class MapTile:
 				if(barrier.direction not in directions_blocked):
 					if(barrier.verbose):
 						text += " " + barrier.description()
+		for npc in self.npcs:
+			text += " " + npc.check_text()
 		for item in self.items:
 			text += " " + item.room_text()
 
@@ -42,12 +48,19 @@ class MapTile:
 	def handle_input(self, verb, noun1, noun2, inventory):
 		if(not noun2):
 			if(verb == 'check'):
+				for barrier in self.barriers:
+					if(barrier.name):
+						if(barrier.name.lower() == noun1):
+							return [True, barrier.description(), inventory]
 				for item in self.items:
 					if(item.name.lower() == noun1):
 						return [True, item.check_text(), inventory]
 				for enemy in self.enemies:
 					if(enemy.name.lower() == noun1):
 						return [True, enemy.check_text(), inventory]
+				for npc in self.npcs:
+					if(npc.name.lower() == noun1):
+						return [True, npc.check_text(), inventory]
 			elif(verb == 'take'):
 				for index in range(len(self.items)):
 					if(self.items[index].name.lower() == noun1):
@@ -67,13 +80,13 @@ class MapTile:
 						inventory.pop(index)
 						return [True, drop_text, inventory]
 
-		for list in [self.barriers, self.items, self.enemies]:
+		for list in [self.barriers, self.items, self.enemies, self.npcs]:
 			for item in list:
 				[status, description, inventory] = item.handle_input(verb, noun1, noun2, inventory)
 				if(status):
 					return [status, description, inventory]
 					
-		for list in [self.barriers, self.items, self.enemies]:			# Added to give the player feedback if they have part of the name of an object correct.
+		for list in [self.barriers, self.items, self.enemies, self.npcs]:			# Added to give the player feedback if they have part of the name of an object correct.
 			for item in list:
 				if(item.name):
 					if(noun1 in item.name):
@@ -138,7 +151,7 @@ class Corridor(MapTile):
 				"You head nearly brushes the low ceiling.", \
 				"The sound of bats in the distance gives you a chill."]
 	
-	def __init__(self, x=0, y=0, barriers = [], items = [], enemies = []):	# Since this tile appears so much, I gave it its own __init__() function to add random flavor text to some of the tiles.
+	def __init__(self, x=0, y=0, barriers = [], items = [], enemies = [], npcs = []):	# Since this tile appears so much, I gave it its own __init__() function to add random flavor text to some of the tiles.
 		self.x = x
 		self.y = y
 		for barrier in barriers:
@@ -147,6 +160,8 @@ class Corridor(MapTile):
 			self.add_item(item)
 		for enemy in enemies:
 			self.add_enemy(enemy)
+		for npc in npcs:
+			self.add_npc(npc)
 			
 		num = randint(0,len(self.flavor_text)*3-1)	# Generate a random number. Based on our range, 1 in 3 corridors will have added flavor text.
 		if(num < len(self.flavor_text)):
@@ -185,7 +200,8 @@ class Corridor(MapTile):
 				if(barrier.direction not in directions_blocked):
 					if(barrier.verbose):
 						text += " " + barrier.description()
-				
+		for npc in self.npcs:
+			text += " " + npc.check_text()
 		for item in self.items:
 			text += " " + item.room_text()
 		return text
@@ -241,6 +257,7 @@ class Nook(MapTile):
 	description = """You have entered a shadowy nook of the cave. The only way out is back the way you came."""
 	
 class Cave(MapTile):
+	npcs = [npcs.OldMan()]
 	description = """You have entered a very dark portion of the cave. Two small fires, one on each side of the room, are glowing softly."""
 		
 		
@@ -256,11 +273,11 @@ class VictoryTile(MapTile):
 		
 class World:									# I choose to define the world as a class. This makes it more straightforward to import into the game.
 	map = [
-		[Corridor(barriers = [barriers.LockedDoor('e')]),			NearVictory(barriers = [barriers.Wall('s')]),													VictoryTile(),																																										Corridor(barriers = [barriers.Wall('w')]), 																			Corridor()],
-		[ExpanseNW(),												ExpanseNE(barriers = [barriers.Wall('n')]),	 													Nook(barriers = [barriers.Wall('n'), barriers.Wall('s'), barriers.Wall('e')]), 																										Corridor(barriers = [barriers.Wall('e'), barriers.Wall('w')], enemies = [enemies.Ogre('s')]),						Corridor(barriers = [barriers.Wall('w')])],
-		[ExpanseSW(),												ExpanseSE(barriers = [barriers.Wall('s')]), 													Corridor(barriers = [barriers.Wall('n'), barriers.Wall('s')]), 																														Corridor(barriers = [barriers.Wall('e'), barriers.Wall('s')]),		 												Corridor(barriers = [barriers.Wall('w')])],
-		[Corridor(barriers = [barriers.Wall('n')]),					Corridor(barriers = [barriers.Wall('n')]),														StartTile(barriers = [barriers.Wall('s'), barriers.Wall('n')]), 																													Corridor(barriers = [barriers.Wall('n')]), 																			Corridor()],
-		[Cave(barriers = [barriers.Wall('e')]),						Corridor(barriers = [barriers.WoodenDoor('e')], enemies = [enemies.GiantSpider('e')]),			StoreRoom(barriers = [barriers.Wall('n')]),																																			None,																												None]
+		[Corridor(barriers = [barriers.LockedDoor('e')]),			NearVictory(barriers = [barriers.Wall('s')]),																VictoryTile(),																																										Corridor(barriers = [barriers.Wall('w')]), 																			Corridor()],
+		[ExpanseNW(),												ExpanseNE(barriers = [barriers.Wall('n')]),	 																Nook(barriers = [barriers.Wall('n'), barriers.Wall('s'), barriers.Wall('e')]), 																										Corridor(barriers = [barriers.Wall('e'), barriers.Wall('w')], enemies = [enemies.GiantSpider('s')]),						Corridor(barriers = [barriers.Wall('w')])],
+		[ExpanseSW(),												ExpanseSE(barriers = [barriers.Wall('s')]), 																Corridor(barriers = [barriers.Wall('n'), barriers.Wall('s')]), 																														Corridor(barriers = [barriers.Wall('e'), barriers.Wall('s')]),		 												Corridor(barriers = [barriers.Wall('w')])],
+		[Corridor(barriers = [barriers.Wall('n')]),					Corridor(barriers = [barriers.Wall('n')]),																	StartTile(barriers = [barriers.Wall('s'), barriers.Wall('n')]), 																													Corridor(barriers = [barriers.Wall('n')]), 																			Corridor()],
+		[Cave(barriers = [barriers.Wall('e')]),						Corridor(barriers = [barriers.WoodenDoor('e'), barriers.Wall('w')], enemies = [enemies.Ogre('e')]),			StoreRoom(barriers = [barriers.Wall('n')]),																																			None,																												None]
 	]
 
 	def __init__(self):

@@ -31,4 +31,10 @@ Fixed a problem in Weapon.attack() that caused attack description index to go ou
 Added some logic to MapTile.intro_text() to allow enemies to block paths as well as barriers. If an enemy is blocking a direction, it supercedes a barrier description.
 Added check for enemies to World.check_north() and other directions.
 
-Added update_rooms() method to World class to allow enemies to be removed after they are defeated and to allow enemies to be randomly spawned.
+Added update_rooms() method to World class to allow enemies to be removed after they are defeated and to allow enemies with agro = True to attack.
+
+Added update() method to MapTile class. This is called by World.update_rooms().
+Added random_spawn() method to MapTile class. This can be updated for rooms in which you want random encounters with enemies. An example of this using a colony of bats is used in the demo.
+
+Added npcs.py.
+Added NPC-related verbs to parse.py.

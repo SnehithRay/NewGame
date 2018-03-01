@@ -141,6 +141,12 @@ class Mountain_of_Gold(Gold):
 	description = "A lustrous mountain of gold coins."
 	dropped_description = "A lustrous mountain of gold coins is lying on the ground."
 	
+class Cost(Gold):
+	name = "price"
+	
+	def	__init__(self, price = 0):
+		self.value = -price
+	
 	
 class Container:
 	name = "Do not create raw Container objects!"
