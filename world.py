@@ -1,4 +1,5 @@
 import items
+import enemies
 import barriers
 
 from random import randint 	# Used to generate random integers.
@@ -9,7 +10,7 @@ class MapTile:
 	enemies = []
 	items = []
 	
-	def __init__(self, x=0, y=0, barriers = [], items = [], enemies = []):
+	def __init__(self, x=0, y=0, barriers = [], items = [], enemies = [], npcs = []):
 		self.x = x
 		self.y = y
 		for barrier in barriers:
@@ -21,13 +22,22 @@ class MapTile:
 	
 	def intro_text(self):
 		text = self.description
+		directions_blocked = []
+		
+		for enemy in self.enemies:
+			if (enemy.direction):
+				if(enemy.direction not in directions_blocked):
+					directions_blocked.append(enemy.direction)
+			text += " " + enemy.check_text()
 		for barrier in self.barriers:
-			if(barrier.verbose):
-				text += " " + barrier.description()
-		#for enemy in self.contents['enemies']:
-		#	text += " " + enemy.description()
+			if (barrier.direction):
+				if(barrier.direction not in directions_blocked):
+					if(barrier.verbose):
+						text += " " + barrier.description()
 		for item in self.items:
 			text += " " + item.room_text()
+		for enemy in self.enemies:
+			text += " " + enemy.description()
 		return text
 		
 	def handle_input(self, verb, noun1, noun2, inventory):
@@ -86,6 +96,22 @@ class MapTile:
 			self.enemies = [enemy]		# Initialize the list if it is empty.
 		else:
 			self.enemies.append(enemy)	# Add to the list if it is not empty.
+			
+	def add_npc(self, npc):
+		if(len(self.npcs) == 0):
+			self.npcs = [npc]		# Initialize the list if it is empty.
+		else:
+			self.npcs.append(npc)	# Add to the list if it is not empty.
+			
+	def update(self):
+		dead_enemy_indices = []
+		for index in range(len(self.enemies)):
+			if (not self.enemies[index].is_alive()):
+				dead_enemy_indices.append(index)
+				for item in self.enemies[index].loot:
+					self.add_item(item)
+		for index in reversed(dead_enemy_indices):
+			self.enemies.pop(index)
 
 
 class StartTile(MapTile):
@@ -133,10 +159,19 @@ class Corridor(MapTile):
 			text += " There are clear pathways leading to the %s, %s, and %s." % (directions_clear[0], directions_clear[1], directions_clear[2])
 		elif(len(directions_clear) == 4):
 			text += " It appears that your path is clear in all directions." 
-			
+		
+		directions_blocked = []
+		
+		for enemy in self.enemies:
+			if (enemy.direction):
+				if(enemy.direction not in directions_blocked):
+					directions_blocked.append(enemy.direction)
+			text += " " + enemy.check_text()
 		for barrier in self.barriers:
-			if(barrier.verbose):
-				text += " " + barrier.description()
+			if (barrier.direction):
+				if(barrier.direction not in directions_blocked):
+					if(barrier.verbose):
+						text += " " + barrier.description()
 				
 		for item in self.items:
 			text += " " + item.room_text()
@@ -166,6 +201,9 @@ class ExpanseNE(MapTile):
 class Nook(MapTile):
 	items = [items.Iron_Key("An old iron key is just sitting in front of you on a stalagmite.")]
 	description = """You have entered a shadowy nook of the cave. The only way out is back the way you came."""
+	
+class Cave(MapTile):
+	description = """You have entered a very dark portion of the cave. Two small fires, one on each side of the room, are glowing softly."""
 		
 		
 class NearVictory(MapTile):
@@ -183,8 +221,8 @@ class World:									# I choose to define the world as a class. This makes it mo
 		[Corridor(barriers = [barriers.LockedDoor('e')]),			NearVictory(barriers = [barriers.Wall('s')]),				VictoryTile(),																																										Corridor(barriers = [barriers.Wall('w')]), 											Corridor()],
 		[ExpanseNW(),												ExpanseNE(barriers = [barriers.Wall('n')]),	 				Nook(barriers = [barriers.Wall('n'), barriers.Wall('s'), barriers.Wall('e')]), 		Corridor(barriers = [barriers.Wall('e'), barriers.Wall('w')]),									Corridor(barriers = [barriers.Wall('w')])],
 		[ExpanseSW(),												ExpanseSE(barriers = [barriers.Wall('s')]), 				Corridor(barriers = [barriers.Wall('n'), barriers.Wall('s')]), 																														Corridor(barriers = [barriers.Wall('e'), barriers.Wall('s')]),		 				Corridor(barriers = [barriers.Wall('w')])],
-		[None,														Corridor(barriers = [barriers.Wall('n')]),					StartTile(barriers = [barriers.Wall('s'), barriers.Wall('n')]), 																													Corridor(barriers = [barriers.Wall('n')]), 											Corridor()],
-		[None,														Corridor(barriers = [barriers.WoodenDoor('e')]),			StoreRoom(barriers = [barriers.Wall('n')]),																																			None,																				None]
+		[Corridor(barriers = [barriers.Wall('n')]),					Corridor(barriers = [barriers.Wall('n')]),					StartTile(barriers = [barriers.Wall('s'), barriers.Wall('n')]), 																													Corridor(barriers = [barriers.Wall('n')]), 											Corridor()],
+		[Cave(barriers = [barriers.Wall('e')]),														Corridor(barriers = [barriers.WoodenDoor('e')], enemies = [enemies.GiantSpider('e')]),			StoreRoom(barriers = [barriers.Wall('n')]),																																			None,																				None]
 	]
 
 	def __init__(self):
@@ -206,6 +244,9 @@ class World:									# I choose to define the world as a class. This makes it mo
 			return None
 			
 	def check_north(self, x, y):
+		for enemy in self.map[y][x].enemies:
+			if(enemy.direction == 'north'):
+				return [False, enemy.check_text()]		
 		for barrier in self.map[y][x].barriers:
 			if(barrier.direction == 'north' and not barrier.passable):
 				return [False, barrier.description()]				
@@ -224,6 +265,9 @@ class World:									# I choose to define the world as a class. This makes it mo
 			return [False, "There doesn't seem to be a path to the north."]
 			
 	def check_south(self, x, y):
+		for enemy in self.map[y][x].enemies:
+			if(enemy.direction == 'south'):
+				return [False, enemy.check_text()]		
 		for barrier in self.map[y][x].barriers:
 			if(barrier.direction == 'south' and not barrier.passable):
 				return [False, barrier.description()]	
@@ -242,6 +286,9 @@ class World:									# I choose to define the world as a class. This makes it mo
 			return [False, "There doesn't seem to be a path to the south."]
 
 	def check_west(self, x, y):
+		for enemy in self.map[y][x].enemies:
+			if(enemy.direction == 'west'):
+				return [False, enemy.check_text()]		
 		for barrier in self.map[y][x].barriers:
 			if(barrier.direction == 'west' and not barrier.passable):
 				return [False, barrier.description()]	
@@ -260,6 +307,9 @@ class World:									# I choose to define the world as a class. This makes it mo
 			return [False, "There doesn't seem to be a path to the west."]
 			
 	def check_east(self, x, y):
+		for enemy in self.map[y][x].enemies:
+			if(enemy.direction == 'east'):
+				return [False, enemy.check_text()]		
 		for barrier in self.map[y][x].barriers:
 			if(barrier.direction == 'east' and not barrier.passable):
 				return [False, barrier.description()]	
@@ -314,3 +364,10 @@ class World:									# I choose to define the world as a class. This makes it mo
 					barrier_present = True
 			if(not barrier_present):
 				self.map[y][x].add_barrier(barriers.Wall('w'))	
+		
+	def update_rooms(self):
+		for row in self.map:
+			for room in row:
+				if(room):
+					room.update()
+	

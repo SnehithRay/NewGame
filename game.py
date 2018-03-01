@@ -7,7 +7,7 @@ import parse
 
 debug_mode = True	# Use this to toggle verbose mode on the text parser.
 
-game_name = "Escape from Cave Terror, v3"
+game_name = "Escape from Cave Terror, v4"
 
 help_text = "To interact with this game world, you will use a basic text-based interface. \
 Try single-word commands like 'inventory' or 'west' (or their counterpart abbreviations, 'i' or 'w', respectively \
@@ -16,9 +16,8 @@ or in some cases, [VERB][NOUN][OBJECT] (e.g. 'attack thief with nasty knife').\
 The game will ignore the articles 'a', 'an', and 'the' (e.g. 'open the door' is the same as 'open door.').\n\n\
 To toggle output from the game parser, type 'debug'. To exit the game at any time, type 'exit' or 'quit'."
 
-victory_text = ["Thank you for playing!", \
-				"I hope you enjoyed this game engine demo.", \
-				"I look forward to seeing the games you create using this as an example!"]
+		
+				
 
 player = Player()
 world = World()
@@ -59,6 +58,11 @@ def play():
 			print("Something seems to have gone wrong. Please try again.")
 			
 		player.update_inventory()
+		world.update_rooms()
+		
+		if(not player.is_alive()):
+			print_loss_text()
+			exit()
 			
 		
 def handle_input(verb, noun1, noun2):
@@ -148,7 +152,22 @@ def handle_input(verb, noun1, noun2):
 						return "I'm not sure what you are trying to look at."
 		else:
 			return "I think you are trying to look at something, but your phrasing is too complicated. Please try again."
-
+			
+	elif(verb == 'attack'):
+		if(not noun2):
+			for enemy in world.tile_at(player.x, player.y).enemies:
+				if(enemy.name.lower() == noun1):
+					if(player.weapon):
+						[attack_text, damage] = player.weapon.attack()
+						attack_text += " " + enemy.take_damage(damage)
+					else:
+						attack_text = "You try to attack, but you come up empty handed! You should equip something first..."
+					if(enemy.is_alive() and not enemy.agro):
+						attack_text += " The %s retaliated..." % enemy.name
+						attack_text += " " + player.take_damage(enemy.damage)
+					return attack_text	
+		else:
+			return "If you want to attack 'with' a weapon, please equip it first."
 
 			
 	elif(verb):
@@ -175,6 +194,10 @@ def print_welcome_text():
 	print()
 	
 def print_victory_text():
+	victory_text = ["Thank you for playing!", \
+				"I hope you enjoyed this game engine demo.", \
+				"I look forward to seeing the games you create using this as an example!"]
+				
 	print()
 	print_center("========================================================")
 	print()
@@ -183,6 +206,19 @@ def print_victory_text():
 	print()
 	print_center("========================================================")
 	exit()
+	
+def print_loss_text():
+	loss_text = ["You have died.", \
+				"Better luck next time!"]
+	print()
+	print_center("========================================================")
+	print()
+	for line in loss_text:
+		print_center(line)
+	print()
+	print_center("========================================================")
+	exit()
 
+	
 ### Play the game.
 play()

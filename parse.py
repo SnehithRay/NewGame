@@ -19,7 +19,7 @@ verbs = {'go': ['go', 'go to', 'walk', 'head', 'move'], \
 	'check': ['check', 'look at', 'look in', 'look', 'examine', 'inspect'], \
 	'attack': ['attack', 'fight', 'kill']}
 	
-implied_verbs = {'go': {'north': ['north', 'n'], 'south': ['south', 's'], 'east': ['east', 'e'], 'west': ['west', 'w']}, 'check': {'inventory': ['inventory', 'i']}}
+implied_verbs = {'go': {'north': ['north', 'n'], 'south': ['south', 's'], 'east': ['east', 'e'], 'west': ['west', 'w']}, 'check': {'inventory': ['inventory', 'i'], 'hp': {'hp', 'health'}}}
 	
 prepositions = ["with", "to", "on", "from", "at"]
 

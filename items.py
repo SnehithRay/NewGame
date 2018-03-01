@@ -59,6 +59,7 @@ class Crusty_Bread(Consumable):
 	
 	description = "Just a stale old piece of bread."
 	dropped_description = "A piece of crusty bread is lying on the ground."
+	consume_description = "You eat the crusty piece of bread."
 			
 class Red_Potion(Consumable):
 	name = "red potion"
@@ -66,11 +67,12 @@ class Red_Potion(Consumable):
 	
 	description = "A bottle of mysterious, glowing red potion. For some reason it looks healthy."
 	dropped_description = "A bottle of red potion is glowing on the ground."
+	consume_description = "You drink the glowing red potion."
 	
 	
 	
 
-class Weapon(Item):
+class Weapon(Item):	
 	equip_description = "You should define flavor text for equipping this item in its subclass."
 	attack_descriptions = ["You should define one or more attack descriptions as a list in your subclass.", "This is an example secondary attack description"]
 
@@ -80,7 +82,7 @@ class Weapon(Item):
 		return self.equip_description
 			
 	def attack(self):
-		return [self.attack_descriptions[randint(0, len(self.attack_descriptions))], self.damage]		# Return damage and a random attack description from your list.
+		return [self.attack_descriptions[randint(0, len(self.attack_descriptions)-1)], self.damage]		# Return damage and a random attack description from your list.
 		
 
 
