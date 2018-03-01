@@ -37,11 +37,24 @@ class OldMan(NPC):
 	description = "An old man in a red robe is standing in the middle of the room."
 	
 	def talk(self):		# Add to this method if you want to be able to talk to your NPC.
-		return "The %s doesn't seem to have anything to say." % self.name		
+		return "The %s doesn't seem to have anything to say." % self.name
+		
+	def give(self, item, inventory):
+		for good in self.goods:
+			if(good == item):
+				cost = items.Cost(
+				inventory += items.Cost(
 
 	def first_time(self):		# Used to have your NPC do something different the first time you see them.
 		self.first_encounter = False
 		return self.description
 		
 	def handle_input(self, verb, noun1, noun2, inventory):
-		return [False, None, inventory]
+		if(noun1 == 'old man' or noun1 == 'man'):
+			if(verb == 'check'):
+				return [True, self.check_text(), inventory]
+			if(verb == 'talk'):
+				text = self.talk()
+				return [True, text, inventory]
+
+		return [False, "", inventory]

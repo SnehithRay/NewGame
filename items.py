@@ -8,6 +8,8 @@ class Item:
 	
 	is_dropped = False	# This is going to store the status of whether this item has been picked up and dropped before.
 	
+	value = 0		# Used to establish value if item is for sale.
+	
 		
 	def __init__(self, description = ""):
 		if(description):
@@ -64,6 +66,8 @@ class Crusty_Bread(Consumable):
 class Red_Potion(Consumable):
 	name = "red potion"
 	healing_value = 75
+	
+	value = 55
 	
 	description = "A bottle of mysterious, glowing red potion. For some reason it looks healthy."
 	dropped_description = "A bottle of red potion is glowing on the ground."
