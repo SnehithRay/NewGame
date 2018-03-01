@@ -65,7 +65,6 @@ class GiantSpider(Enemy):
 	description = "It twitches its mandibles at you menaciingly."
 	hp = 10
 	damage = 2
-	loot = [items.Crusty_Bread()]
 
 
 class Ogre(Enemy):
@@ -86,6 +85,7 @@ class BatColony(Enemy):
 
 class RockMonster(Enemy):
 	name = "Rock Monster"
-	description = "It does not look like it wants to let you pass."
+	description = "A Rock Monster appears from the shadows. An old iron key dangles precariously from a stalagmite on the monster's shoulder."
 	hp = 80
 	damage = 15
+	loot = [items.Iron_Key("An old iron key lies on the ground near the remains of the Rock Monster.")]

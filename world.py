@@ -36,8 +36,7 @@ class MapTile:
 						text += " " + barrier.description()
 		for item in self.items:
 			text += " " + item.room_text()
-		for enemy in self.enemies:
-			text += " " + enemy.description()
+
 		return text
 		
 	def handle_input(self, verb, noun1, noun2, inventory):
@@ -46,6 +45,9 @@ class MapTile:
 				for item in self.items:
 					if(item.name.lower() == noun1):
 						return [True, item.check_text(), inventory]
+				for enemy in self.enemies:
+					if(enemy.name.lower() == noun1):
+						return [True, enemy.check_text(), inventory]
 			elif(verb == 'take'):
 				for index in range(len(self.items)):
 					if(self.items[index].name.lower() == noun1):
@@ -103,7 +105,10 @@ class MapTile:
 		else:
 			self.npcs.append(npc)	# Add to the list if it is not empty.
 			
-	def update(self):
+	def random_spawn(self):
+		pass						# Update this for your specific subclass if you want randomly spawning enemies.
+			
+	def update(self, player):
 		dead_enemy_indices = []
 		for index in range(len(self.enemies)):
 			if (not self.enemies[index].is_alive()):
@@ -112,9 +117,17 @@ class MapTile:
 					self.add_item(item)
 		for index in reversed(dead_enemy_indices):
 			self.enemies.pop(index)
+		if(self.x == player.x and self.y == player.y):
+			for enemy in self.enemies:
+				if(enemy.agro):
+					agro_text = "The %s seems very aggitated. It attacks! " % enemy.name
+					agro_text += player.take_damage(enemy.damage)
+					print()
+					print(agro_text)
 
 
 class StartTile(MapTile):
+	items = [items.Rock()]
 	description = """You find yourself in a cave with a flickering torch on the wall.
 		You can make out a path to the east and to the west, each equally as dark and foreboding.
 		"""
@@ -189,17 +202,42 @@ class StoreRoom(MapTile):
 class ExpanseSW(MapTile):
 	description = """You find yourself in an expansive cavern, with walls stretching out nearly as far as the eye can see. The room opens before you to the northeast."""
 	
+	def random_spawn(self):
+		if(randint(0,3) == 0):		# 1 in 4 odds.
+			self.enemies = [enemies.BatColony()]
+		else:
+			self.enemies = []
+			
+	
 class ExpanseSE(MapTile):
 	description = """You find yourself in an expansive cavern, with walls stretching out nearly as far as the eye can see. The room opens before you to the northwest. There is a small corridor leading to the east from here."""
 	
+	def random_spawn(self):
+		if(randint(0,2) == 0):		# 1 in 3 odds.
+			self.enemies = [enemies.BatColony()]
+		else:
+			self.enemies = []
+			
 class ExpanseNW(MapTile):
 	description = """You find yourself in an expansive cavern, with walls stretching out nearly as far as the eye can see. The room opens before you to the southeast. There is a small corridor leading to the north from here."""
-	
+
+	def random_spawn(self):
+		if(randint(0,3) == 0):		# 1 in 4 odds.
+			self.enemies = [enemies.BatColony()]
+		else:
+			self.enemies = []
+				
 class ExpanseNE(MapTile):
 	description = """You find yourself in an expansive cavern, with walls stretching out nearly as far as the eye can see. The room opens before you to the southwest. A small nook lies to your east."""
 
+	def random_spawn(self):
+		if(randint(0,1) == 0):		# 1 in 2 odds.
+			self.enemies = [enemies.BatColony()]
+		else:
+			self.enemies = []
+			
 class Nook(MapTile):
-	items = [items.Iron_Key("An old iron key is just sitting in front of you on a stalagmite.")]
+	enemies = [enemies.RockMonster()]
 	description = """You have entered a shadowy nook of the cave. The only way out is back the way you came."""
 	
 class Cave(MapTile):
@@ -218,11 +256,11 @@ class VictoryTile(MapTile):
 		
 class World:									# I choose to define the world as a class. This makes it more straightforward to import into the game.
 	map = [
-		[Corridor(barriers = [barriers.LockedDoor('e')]),			NearVictory(barriers = [barriers.Wall('s')]),				VictoryTile(),																																										Corridor(barriers = [barriers.Wall('w')]), 											Corridor()],
-		[ExpanseNW(),												ExpanseNE(barriers = [barriers.Wall('n')]),	 				Nook(barriers = [barriers.Wall('n'), barriers.Wall('s'), barriers.Wall('e')]), 		Corridor(barriers = [barriers.Wall('e'), barriers.Wall('w')]),									Corridor(barriers = [barriers.Wall('w')])],
-		[ExpanseSW(),												ExpanseSE(barriers = [barriers.Wall('s')]), 				Corridor(barriers = [barriers.Wall('n'), barriers.Wall('s')]), 																														Corridor(barriers = [barriers.Wall('e'), barriers.Wall('s')]),		 				Corridor(barriers = [barriers.Wall('w')])],
-		[Corridor(barriers = [barriers.Wall('n')]),					Corridor(barriers = [barriers.Wall('n')]),					StartTile(barriers = [barriers.Wall('s'), barriers.Wall('n')]), 																													Corridor(barriers = [barriers.Wall('n')]), 											Corridor()],
-		[Cave(barriers = [barriers.Wall('e')]),														Corridor(barriers = [barriers.WoodenDoor('e')], enemies = [enemies.GiantSpider('e')]),			StoreRoom(barriers = [barriers.Wall('n')]),																																			None,																				None]
+		[Corridor(barriers = [barriers.LockedDoor('e')]),			NearVictory(barriers = [barriers.Wall('s')]),													VictoryTile(),																																										Corridor(barriers = [barriers.Wall('w')]), 																			Corridor()],
+		[ExpanseNW(),												ExpanseNE(barriers = [barriers.Wall('n')]),	 													Nook(barriers = [barriers.Wall('n'), barriers.Wall('s'), barriers.Wall('e')]), 																										Corridor(barriers = [barriers.Wall('e'), barriers.Wall('w')], enemies = [enemies.Ogre('s')]),						Corridor(barriers = [barriers.Wall('w')])],
+		[ExpanseSW(),												ExpanseSE(barriers = [barriers.Wall('s')]), 													Corridor(barriers = [barriers.Wall('n'), barriers.Wall('s')]), 																														Corridor(barriers = [barriers.Wall('e'), barriers.Wall('s')]),		 												Corridor(barriers = [barriers.Wall('w')])],
+		[Corridor(barriers = [barriers.Wall('n')]),					Corridor(barriers = [barriers.Wall('n')]),														StartTile(barriers = [barriers.Wall('s'), barriers.Wall('n')]), 																													Corridor(barriers = [barriers.Wall('n')]), 																			Corridor()],
+		[Cave(barriers = [barriers.Wall('e')]),						Corridor(barriers = [barriers.WoodenDoor('e')], enemies = [enemies.GiantSpider('e')]),			StoreRoom(barriers = [barriers.Wall('n')]),																																			None,																												None]
 	]
 
 	def __init__(self):
@@ -365,9 +403,9 @@ class World:									# I choose to define the world as a class. This makes it mo
 			if(not barrier_present):
 				self.map[y][x].add_barrier(barriers.Wall('w'))	
 		
-	def update_rooms(self):
+	def update_rooms(self, player):
 		for row in self.map:
 			for room in row:
 				if(room):
-					room.update()
+					room.update(player)
 	

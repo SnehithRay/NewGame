@@ -31,4 +31,4 @@ Fixed a problem in Weapon.attack() that caused attack description index to go ou
 Added some logic to MapTile.intro_text() to allow enemies to block paths as well as barriers. If an enemy is blocking a direction, it supercedes a barrier description.
 Added check for enemies to World.check_north() and other directions.
 
-Added update_rooms() method to World class to allow enemies to be removed after they are defeated.
+Added update_rooms() method to World class to allow enemies to be removed after they are defeated and to allow enemies to be randomly spawned.

@@ -58,7 +58,7 @@ def play():
 			print("Something seems to have gone wrong. Please try again.")
 			
 		player.update_inventory()
-		world.update_rooms()
+		world.update_rooms(player)
 		
 		if(not player.is_alive()):
 			print_loss_text()
@@ -98,6 +98,7 @@ def handle_input(verb, noun1, noun2):
 				[move_status, move_description] = world.check_north(player.x, player.y)
 				if(move_status):
 					player.move_north()
+					world.tile_at(player.x, player.y).random_spawn()		# Randomly spawn enemies if possible.
 					return [move_description, world.tile_at(player.x, player.y).intro_text()]
 				else:
 					return move_description
@@ -106,6 +107,7 @@ def handle_input(verb, noun1, noun2):
 				[move_status, move_description] = world.check_south(player.x, player.y)
 				if(move_status):
 					player.move_south()
+					world.tile_at(player.x, player.y).random_spawn()		# Randomly spawn enemies if possible.
 					return [move_description, world.tile_at(player.x, player.y).intro_text()]
 				else:
 					return move_description
@@ -114,6 +116,7 @@ def handle_input(verb, noun1, noun2):
 				[move_status, move_description] = world.check_east(player.x, player.y)
 				if(move_status):
 					player.move_east()
+					world.tile_at(player.x, player.y).random_spawn()		# Randomly spawn enemies if possible.
 					return [move_description, world.tile_at(player.x, player.y).intro_text()]
 				else:
 					return move_description
@@ -122,6 +125,7 @@ def handle_input(verb, noun1, noun2):
 				[move_status, move_description] = world.check_west(player.x, player.y)
 				if(move_status):
 					player.move_west()
+					world.tile_at(player.x, player.y).random_spawn()		# Randomly spawn enemies if possible.
 					return [move_description, world.tile_at(player.x, player.y).intro_text()]
 				else:
 					return move_description	

@@ -2,9 +2,7 @@ import items
 
 class Player:
 	def __init__(self):
-		self.inventory = [items.Rock(),
-						items.Dagger(),
-						items.Crusty_Bread()]
+		self.inventory = [items.Crusty_Bread()]
 						
 		self.weapon = None
 		

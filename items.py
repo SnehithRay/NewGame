@@ -90,7 +90,7 @@ class Rock(Weapon):
 	name = "rock"
 	
 	description = "A fist-sized rock, suitable for bludgeoning."
-	dropped_description = "A fist-sized rock lies on the ground. It looks like it would be suitable for bludgeoning someone."
+	dropped_description = "A fist-sized rock lies on the ground. It looks like it would be suitable for bludgeoning someone... or something."
 	equip_description = "You arm yourself with the rock."
 	attack_descriptions = ["You swing the rock as hard as you can. Crack!", "You wind up and chuck the rock at your enemy. Oof."]
 	
