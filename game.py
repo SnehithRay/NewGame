@@ -172,6 +172,22 @@ def handle_input(verb, noun1, noun2):
 					return attack_text	
 		else:
 			return "If you want to attack 'with' a weapon, please equip it first."
+		return "I'm not sure what you're trying to attack."
+	elif(verb == 'buy'):
+		for npc in world.tile_at(player.x, player.y).npcs:
+			for good in npc.goods:
+				if(noun1 == good.name):
+					if(good.value > 0):
+						if(player.gold >= good.value):
+							player.gold -= good.value
+							player.inventory = npc.give(good, player.inventory)
+							return "You purchased the %s from the %s for %d gold." % (good.name, npc.name, good.value)
+						else:
+							return "You can't afford that."
+					else:
+						return "It appears to be a gift. Have you tried taking it?"
+				
+		return "That doesn't seem to be for sale."
 
 			
 	elif(verb):

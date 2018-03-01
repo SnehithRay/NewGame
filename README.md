@@ -38,3 +38,7 @@ Added random_spawn() method to MapTile class. This can be updated for rooms in w
 
 Added npcs.py.
 Added NPC-related verbs to parse.py.
+Added value to item objects so that they can be sold by NPCs.
+Updated game.py to include 'buy' verb actions.
+
+Fixed a bug in World.add_implied_barriers that caused walls to be erected if an enemy was blocking a path.

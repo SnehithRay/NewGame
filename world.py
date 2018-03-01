@@ -274,10 +274,10 @@ class VictoryTile(MapTile):
 class World:									# I choose to define the world as a class. This makes it more straightforward to import into the game.
 	map = [
 		[Corridor(barriers = [barriers.LockedDoor('e')]),			NearVictory(barriers = [barriers.Wall('s')]),																VictoryTile(),																																										Corridor(barriers = [barriers.Wall('w')]), 																			Corridor()],
-		[ExpanseNW(),												ExpanseNE(barriers = [barriers.Wall('n')]),	 																Nook(barriers = [barriers.Wall('n'), barriers.Wall('s'), barriers.Wall('e')]), 																										Corridor(barriers = [barriers.Wall('e'), barriers.Wall('w')], enemies = [enemies.GiantSpider('s')]),						Corridor(barriers = [barriers.Wall('w')])],
+		[ExpanseNW(),												ExpanseNE(barriers = [barriers.Wall('n')]),	 																Nook(barriers = [barriers.Wall('n'), barriers.Wall('s'), barriers.Wall('e')]), 																										Corridor(barriers = [barriers.Wall('e'), barriers.Wall('w')], enemies = [enemies.Ogre('s')]),						Corridor(barriers = [barriers.Wall('w')])],
 		[ExpanseSW(),												ExpanseSE(barriers = [barriers.Wall('s')]), 																Corridor(barriers = [barriers.Wall('n'), barriers.Wall('s')]), 																														Corridor(barriers = [barriers.Wall('e'), barriers.Wall('s')]),		 												Corridor(barriers = [barriers.Wall('w')])],
 		[Corridor(barriers = [barriers.Wall('n')]),					Corridor(barriers = [barriers.Wall('n')]),																	StartTile(barriers = [barriers.Wall('s'), barriers.Wall('n')]), 																													Corridor(barriers = [barriers.Wall('n')]), 																			Corridor()],
-		[Cave(barriers = [barriers.Wall('e')]),						Corridor(barriers = [barriers.WoodenDoor('e'), barriers.Wall('w')], enemies = [enemies.Ogre('e')]),			StoreRoom(barriers = [barriers.Wall('n')]),																																			None,																												None]
+		[Cave(barriers = [barriers.Wall('e')]),						Corridor(barriers = [barriers.WoodenDoor('e'), barriers.Wall('w')], enemies = [enemies.GiantSpider('e')]),	StoreRoom(barriers = [barriers.Wall('n')]),																																			None,																												None]
 	]
 
 	def __init__(self):
@@ -387,6 +387,9 @@ class World:									# I choose to define the world as a class. This makes it mo
 		[status, text] = self.check_north(x,y)
 		barrier_present = False
 		if(not status):
+			for enemy in self.map[y][x].enemies:
+				if enemy.direction == 'north':
+					barrier_present = True
 			for barrier in self.map[y][x].barriers:
 				if barrier.direction == 'north':
 					barrier_present = True
@@ -396,6 +399,9 @@ class World:									# I choose to define the world as a class. This makes it mo
 		[status, text] = self.check_south(x,y)
 		barrier_present = False
 		if(not status):
+			for enemy in self.map[y][x].enemies:
+				if enemy.direction == 'south':
+					barrier_present = True
 			for barrier in self.map[y][x].barriers:
 				if barrier.direction == 'south':
 					barrier_present = True
@@ -405,6 +411,9 @@ class World:									# I choose to define the world as a class. This makes it mo
 		[status, text] = self.check_east(x,y)
 		barrier_present = False
 		if(not status):
+			for enemy in self.map[y][x].enemies:
+				if enemy.direction == 'east':
+					barrier_present = True
 			for barrier in self.map[y][x].barriers:
 				if barrier.direction == 'east':
 					barrier_present = True
@@ -414,6 +423,9 @@ class World:									# I choose to define the world as a class. This makes it mo
 		[status, text] = self.check_west(x,y)
 		barrier_present = False
 		if(not status):
+			for enemy in self.map[y][x].enemies:
+				if enemy.direction == 'west':
+					barrier_present = True
 			for barrier in self.map[y][x].barriers:
 				if barrier.direction == 'west':
 					barrier_present = True

@@ -11,11 +11,14 @@ class Item:
 	value = 0		# Used to establish value if item is for sale.
 	
 		
-	def __init__(self, description = ""):
+	def __init__(self, description = "", value = 0):
 		if(description):
 			self.intro_description = description
 		else:
 			self.intro_description = self.dropped_description
+		
+		if(self.value == 0):
+			self.value = value
 			
 	def __str__(self):
 		return self.name	
@@ -66,8 +69,6 @@ class Crusty_Bread(Consumable):
 class Red_Potion(Consumable):
 	name = "red potion"
 	healing_value = 75
-	
-	value = 55
 	
 	description = "A bottle of mysterious, glowing red potion. For some reason it looks healthy."
 	dropped_description = "A bottle of red potion is glowing on the ground."
@@ -144,12 +145,6 @@ class Mountain_of_Gold(Gold):
 	
 	description = "A lustrous mountain of gold coins."
 	dropped_description = "A lustrous mountain of gold coins is lying on the ground."
-	
-class Cost(Gold):
-	name = "price"
-	
-	def	__init__(self, price = 0):
-		self.value = -price
 	
 	
 class Container:

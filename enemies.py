@@ -62,7 +62,7 @@ class Enemy:
 
 class GiantSpider(Enemy):
 	name = "Giant Spider"
-	description = "It twitches its mandibles at you menaciingly."
+	description = "It twitches its mandibles at you menacingly."
 	hp = 10
 	damage = 2
 
