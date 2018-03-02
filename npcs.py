@@ -44,7 +44,7 @@ class OldMan(NPC):
 				if(self.quantities[self.goods.index(item)] > 0):
 					quantity = "quantity = %d" % self.quantities[self.goods.index(item)]
 				else:
-					quantity = "quantity = unlimied"
+					quantity = "quantity = unlimited"
 				print("* " + item.name.title() + " (" + str(item.value) + " gold, " + quantity + ")")
 		return ""
 		
